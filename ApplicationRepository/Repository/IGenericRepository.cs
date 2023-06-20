@@ -9,10 +9,10 @@ namespace ApplicationRepository.Repository
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        public void Create(TEntity entity);
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null,
+        public Task Create(TEntity entity);
+        public Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? filter = null,
            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null);
-        public void Update(TEntity entity, params object[] keys);
-        public void Delete(params object[] keys);
+        public Task Update(TEntity entity, params object[] keys);
+        public Task Delete(params object[] keys);
     }
 }

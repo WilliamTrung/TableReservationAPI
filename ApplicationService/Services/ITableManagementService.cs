@@ -18,7 +18,7 @@ namespace ApplicationService.Services
         /// <param name="table"></param>
         /// <returns></returns>
         /// <exception cref="MissingMemberException"></exception>
-        Task AddTable(ModifiedTableModel table);
+        Task AddTable(NewTableModel table);
         /// <summary>
         /// Update table info
         /// <para>Throw MissingMemberException: Status does not exist</para>

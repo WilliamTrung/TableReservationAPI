@@ -17,26 +17,28 @@ namespace TableReservationAPI.Controllers
             _tableManagementService = tableManagementService;
         }
         [HttpGet("status")]
-        [EnableQuery]
         public IActionResult GetTableStatuses()
         {
-            return Ok(_tableManagementService.GetTableStatuses());
+            var result = _tableManagementService.GetTableStatuses().Result;
+            var array = result.Select(c => c.Description);
+            return Ok(array);
         }
         [HttpGet("type")]
         [EnableQuery]
         public IActionResult GetTableTypes()
         {
-            return Ok(_tableManagementService.GetTableTypes());
+            var result = _tableManagementService.GetTableTypes().Result;
+            return Ok(result);
         }
         [HttpGet]
         [EnableQuery]
         public IActionResult GetTables()
         {
-            var result = _tableManagementService.GetTables();
+            var result = _tableManagementService.GetTables().Result;
             return Ok(result);
         }
         [HttpPost]
-        public IActionResult AddTable(ModifiedTableModel table)
+        public IActionResult AddTable(NewTableModel table)
         {
             try
             {

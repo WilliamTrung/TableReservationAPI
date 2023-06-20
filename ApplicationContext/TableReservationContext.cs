@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationContext.EFConfiguration;
+using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,16 +24,17 @@ namespace ApplicationContext
         {
                 
         }
-        public TableReservationContext(DbContextOptions options) : base(options)
+        public TableReservationContext(DbContextOptions<TableReservationContext> options) : base(options)
         {
             
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(optionsBuilder != null)
+            if (optionsBuilder != null)
             {
                 optionsBuilder.UseNpgsql(Global.ConnectionString);
             }
+            //base.OnConfiguring(optionsBuilder);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,32 +75,7 @@ namespace ApplicationContext
                     Description = "Unavailable"
                 }
                 );
-            modelBuilder.Entity<TableType>().HasData(
-                new TableType
-                {
-                    Id = 1,
-                    Private = true,
-                    Seat = 2
-                },
-                new TableType
-                {
-                    Id = 2,
-                    Private = true,
-                    Seat = 2
-                },
-                new TableType
-                {
-                    Id = 3,
-                    Private = false,
-                    Seat = 4
-                },
-                new TableType
-                {
-                    Id = 4,
-                    Private = false,
-                    Seat = 4
-                }
-                );
+            TableTypeConfiguration.Configuring(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
     }

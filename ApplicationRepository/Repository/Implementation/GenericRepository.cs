@@ -1,4 +1,4 @@
-﻿using ApplicationCore;
+﻿using ApplicationContext;
 using ApplicationCore.IType;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,7 +19,7 @@ namespace ApplicationRepository.Repository.Implementation
             _context = context;
             _dbSet = _context.Set<TEntity>();
         }
-        public virtual void Create(TEntity entity)
+        public virtual Task Create(TEntity entity)
         {
             if (entity is IAuditEntity)
             {
@@ -31,9 +31,10 @@ namespace ApplicationRepository.Repository.Implementation
                 ((ISoftDeleteEntity)entity).IsDeleted = false;
             }
             _dbSet.Add(entity);
+            return Task.CompletedTask;
         }
 
-        public void Delete(params object[] keys)
+        public Task Delete(params object[] keys)
         {
             var entity = _dbSet.Find(keys);
             if (entity == null) throw new ArgumentNullException("entity");
@@ -46,9 +47,10 @@ namespace ApplicationRepository.Repository.Implementation
             {
                 _dbSet.Remove(entity);
             }
+            return Task.CompletedTask;
         }
 
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null)
+        public Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null)
         {
             var query = _dbSet.AsQueryable();
             if (includeProperties != null)
@@ -67,10 +69,10 @@ namespace ApplicationRepository.Repository.Implementation
             {
                 query = orderBy(query);
             }
-            return query.AsEnumerable();
+            return Task.FromResult(query.AsEnumerable());
         }
 
-        public void Update(TEntity entity, params object[] keys)
+        public Task Update(TEntity entity, params object[] keys)
         {
             var find = _dbSet.Find(keys);
             if(find != null)
@@ -80,12 +82,11 @@ namespace ApplicationRepository.Repository.Implementation
                     ((IAuditEntity)entity).Modified = DateTime.UtcNow;
                 }
                 _context.Entry(find).CurrentValues.SetValues(entity);
+                return Task.CompletedTask;
             } else
             {
                 throw new KeyNotFoundException();
             }
-                
-            
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ApplicationCore;
+﻿using ApplicationContext;
 using ApplicationCore.Entities;
 using ApplicationRepository.Repository;
 using ApplicationRepository.Repository.Implementation;
@@ -14,6 +14,18 @@ namespace ApplicationService.UnitOfWork.Implementation
     {
         private bool disposedValue;
         private readonly TableReservationContext _context;
+
+        private GenericRepository<Rate>? _rateRepos;
+        private GenericRepository<Reservation>? _reservationRepos;
+        private GenericRepository<ReservationStatus>? _reservationStatusRepos;
+        private GenericRepository<Review>? _reviewRepos;
+        private GenericRepository<ReviewRating>? _reviewRatingRepos;
+        private GenericRepository<Role>? _roleRepos;
+        private GenericRepository<Table>?    _tableRepos;
+        private GenericRepository<User>? _userRepos;
+        private GenericRepository<TableStatus>? _tableStatusRepos;
+        private GenericRepository<TableType>? _tableTypeRepos;
+
         public UnitOfWork(TableReservationContext context)
         {
             _context = context;
@@ -22,11 +34,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(RateRepository == null)
+                if(_rateRepos == null)
                 {
-                    return new GenericRepository<Rate>(_context);
+                    _rateRepos = new GenericRepository<Rate>(_context);
                 }
-                return RateRepository;
+                return _rateRepos;
             }
         }
 
@@ -34,11 +46,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(ReservationRepository == null)
+                if(_reservationRepos == null)
                 {
-                    return new GenericRepository<Reservation>(_context);
+                    _reservationRepos = new GenericRepository<Reservation>(_context);
                 }
-                return ReservationRepository;
+                return _reservationRepos;
             }
         }
 
@@ -46,11 +58,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(ReservationStatusRepository == null)
+                if(_reservationStatusRepos == null)
                 {
-                    return new GenericRepository<ReservationStatus>(_context);
+                    _reservationStatusRepos = new GenericRepository<ReservationStatus>(_context);
                 }
-                return ReservationStatusRepository;
+                return _reservationStatusRepos;
             }
         }
 
@@ -58,11 +70,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(ReviewRepository == null)
+                if(_reviewRepos == null)
                 {
-                    return new GenericRepository<Review>(_context);
+                    _reviewRepos = new GenericRepository<Review>(_context);
                 }
-                return ReviewRepository;
+                return _reviewRepos;
             }
         }
 
@@ -70,11 +82,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(ReviewRatingRepository == null)
+                if(_reviewRatingRepos == null)
                 {
-                    return new GenericRepository<ReviewRating>(_context);
+                    _reviewRatingRepos = new GenericRepository<ReviewRating>(_context);
                 }
-                return ReviewRatingRepository;
+                return _reviewRatingRepos;
             }
         }
 
@@ -82,11 +94,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(RoleRepository == null)
+                if(_roleRepos == null)
                 {
-                    return new GenericRepository<Role>(_context);
+                    _roleRepos = new GenericRepository<Role>(_context);
                 }
-                return RoleRepository;
+                return _roleRepos;
             }
         }
 
@@ -94,11 +106,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(TableRepository == null)
+                if(_tableRepos == null)
                 {
-                    return new GenericRepository<Table>(_context);
+                    _tableRepos = new GenericRepository<Table>(_context);
                 }
-                return TableRepository;
+                return _tableRepos;
             }
         }
 
@@ -106,11 +118,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(TableStatusRepository == null)
+                if(_tableStatusRepos == null)
                 {
-                    return new GenericRepository<TableStatus>(_context);
+                    _tableStatusRepos = new GenericRepository<TableStatus>(_context);
                 }
-                return TableStatusRepository;
+                return _tableStatusRepos;
             }
         }
 
@@ -118,11 +130,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(TableTypeRepository == null)
+                if(_tableTypeRepos == null)
                 {
-                    return new GenericRepository<TableType>(_context);
+                    _tableTypeRepos = new GenericRepository<TableType>(_context);
                 }
-                return TableTypeRepository;
+                return _tableTypeRepos;
             }
         }
 
@@ -130,11 +142,11 @@ namespace ApplicationService.UnitOfWork.Implementation
         {
             get
             {
-                if(UserRepository == null)
+                if(_userRepos == null)
                 {
-                    return new GenericRepository<User>(_context);
+                    _userRepos = new GenericRepository<User>(_context);
                 }
-                return UserRepository;
+                return _userRepos;
             }
         }
 

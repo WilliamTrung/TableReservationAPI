@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApplicationCore.IType;
 
 namespace ApplicationCore.Entities
 {
-    public class Reservation
+    public class Reservation : IAuditEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,21 +17,24 @@ namespace ApplicationCore.Entities
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(Table))]
-        public int TableId { get; set; }
+        public int? TableId { get; set; }
         [ForeignKey(nameof(ReservationStatus))]
         public int StatusId { get; set; }
         [ForeignKey(nameof(Review))]
         public int ReviewId { get; set; }
         [Range(1, int.MaxValue)]
         public int GuestAmount { get; set; }  
-        public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset Modified { get; set; }
         [Required]
         public DateTimeOffset ReservedTime { get; set; }
+        public bool Private { get; set; } = false;
         public string? Note { get; set; }
 
         public virtual User? User { get; set; }
         public virtual Table? Table { get; set; }
         public virtual ReservationStatus? Status { get; set; }
         public virtual Review? Review { get; set; }
+        
     }
 }

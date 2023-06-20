@@ -27,14 +27,14 @@ namespace ApplicationService.Services.Implementation
         /// <param name="table"></param>
         /// <returns></returns>
         /// <exception cref="MissingMemberException"></exception>
-        public Task AddTable(ModifiedTableModel table)
+        public Task AddTable(NewTableModel table)
         {
-            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description == table.TableStatus).FirstOrDefault();
+            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
             if(checkStatus == null)
             {
                 throw new MissingMemberException("Selected status does not exist!");
             }
-            var checkType = _unitOfWork.TableTypeRepository.Get(filter: type => type.Private == table.Private && type.Seat == table.Seat).FirstOrDefault();
+            var checkType = _unitOfWork.TableTypeRepository.Get(filter: type => type.Private == table.Private && type.Seat == table.Seat).Result.FirstOrDefault();
             if (checkType == null)
             {
                 throw new MissingMemberException("Selected type does not exist!");
@@ -59,7 +59,7 @@ namespace ApplicationService.Services.Implementation
 
         public Task<IEnumerable<ModifiedTableModel>> GetTables()
         {
-            var list = _unitOfWork.TableRepository.Get(filter: null, orderBy: null, includeProperties: "Status,Type");
+            var list = _unitOfWork.TableRepository.Get(filter: null, orderBy: null, includeProperties: "Status,Type").Result;
             var temp = new List<ModifiedTableModel>();
             foreach (var item in list)
             {
@@ -78,19 +78,20 @@ namespace ApplicationService.Services.Implementation
 
         public Task<IEnumerable<TableTypeModel>> GetTableTypes()
         {
-            var list = _unitOfWork.TableTypeRepository.Get();
+            var tableTypeRepos = _unitOfWork.TableTypeRepository;
+            var list = tableTypeRepos.Get();
             var result = _mapper.Map<IEnumerable<TableTypeModel>>(list);
             return Task.FromResult(result);
         }
 
         public Task UpdateTable(ModifiedTableModel table)
         {
-            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description == table.TableStatus).FirstOrDefault();
+            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
             if (checkStatus == null)
             {
                 throw new MissingMethodException("Selected status does not exist!");
             }
-            var checkType = _unitOfWork.TableTypeRepository.Get(filter: type => type.Private == table.Private && type.Seat == table.Seat).FirstOrDefault();
+            var checkType = _unitOfWork.TableTypeRepository.Get(filter: type => type.Private == table.Private && type.Seat == table.Seat).Result.FirstOrDefault();
             if (checkType == null)
             {
                 throw new MissingMethodException("Selected type does not exist!");

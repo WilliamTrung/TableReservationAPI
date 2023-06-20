@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
     <ProjectReference Include="..\ApplicationRepository\ApplicationRepository.csproj" />
+    <ProjectReference Include="..\Validator\Validator.csproj" />
   </ItemGroup>
 
 </Project>

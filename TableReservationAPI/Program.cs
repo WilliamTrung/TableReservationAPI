@@ -1,9 +1,11 @@
+using ApplicationContext;
+using ApplicationService.Mapper;
 using ApplicationService.Services;
 using ApplicationService.Services.Implementation;
 using ApplicationService.UnitOfWork;
 using ApplicationService.UnitOfWork.Implementation;
 using Microsoft.AspNetCore.OData;
-using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,8 @@ builder.Services.AddControllers().AddOData(options => options
                (
                    x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
                ); ;
+builder.Services.AddDbContext<TableReservationContext>(option => option.UseNpgsql(Global.ConnectionString));
+builder.Services.AddAutoMapper(typeof(Mapper));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<ITableManagementService, TableManagement>();
 
@@ -37,4 +41,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 app.Run();

@@ -6,23 +6,43 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Validator;
 
 namespace ApplicationService.Models.ReservationModels
 {
     public class ReservationModel
     {
-        public string? Email { get; set; }
-        [ForeignKey(nameof(Table))]
-        public int TableId { get; set; }
-        [ForeignKey(nameof(ReservationStatus))]
-        public int StatusId { get; set; }
-        [ForeignKey(nameof(Review))]
-        public int ReviewId { get; set; }
-        [Range(1, int.MaxValue)]
-        public int GuestAmount { get; set; }
-        public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
-        [Required]
-        public DateTimeOffset ReservedTime { get; set; }
-        public string? Note { get; set; }
+        public int Id { get; set; }
+        public string Email { get; set; } = null!;
+        public int Seat { get; set; }
+        public bool Private { get; set; }
+        public DateOnly Date { get; set; }        
+        public TimeOnly Time { get; set; }
+        public DateTimeOffset ModifiedDate { get; set; }
+        public string? Note { get; set; } = null!;
+        // for reception only
+        public int? AssignedTableId { get; set; }
+        //system decide
+        public string Status { get; set; } = null!;
+
+
+        public static ReservationModel FromReservation(Reservation reservation)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            return new ReservationModel
+            {
+                Email = reservation.User.Email,
+                Id = reservation.Id,
+                Seat = reservation.GuestAmount,
+                Private = reservation.Private,
+                Date = DateOnly.FromDateTime(reservation.ReservedTime.DateTime),
+                Time = TimeOnly.FromDateTime(reservation.ReservedTime.DateTime),
+                ModifiedDate = reservation.Modified,
+                Note = reservation.Note,
+                AssignedTableId = reservation.TableId,
+                Status = reservation.Status.Description
+            };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
     }
 }

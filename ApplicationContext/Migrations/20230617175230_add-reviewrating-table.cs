@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ApplicationCore.Migrations
+namespace ApplicationContext.Migrations
 {
     public partial class addreviewratingtable : Migration
     {
