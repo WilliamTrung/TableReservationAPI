@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationContext", "Appli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator", "Validator\Validator.csproj", "{0F9494B9-CB73-4E33-BC55-B02CBAD91D94}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableReservationAPI", "TableReservationAPI\TableReservationAPI.csproj", "{631C9E9A-24C2-4BD8-8766-A3ECED2831AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0F9494B9-CB73-4E33-BC55-B02CBAD91D94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F9494B9-CB73-4E33-BC55-B02CBAD91D94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F9494B9-CB73-4E33-BC55-B02CBAD91D94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{631C9E9A-24C2-4BD8-8766-A3ECED2831AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{631C9E9A-24C2-4BD8-8766-A3ECED2831AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{631C9E9A-24C2-4BD8-8766-A3ECED2831AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{631C9E9A-24C2-4BD8-8766-A3ECED2831AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
