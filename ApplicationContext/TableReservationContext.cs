@@ -16,7 +16,6 @@ namespace ApplicationContext
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<TableType> TableTypes { get; set; } = null!;
-        public virtual DbSet<TableStatus> TableStatuses { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -58,23 +57,6 @@ namespace ApplicationContext
                     Id = 2,
                     Name = "Reception"
                 });
-            modelBuilder.Entity<TableStatus>().HasData(
-                new TableStatus
-                {
-                    Id = 1,
-                    Description = "Vacant"
-                },
-                new TableStatus
-                {
-                    Id = 2,
-                    Description = "Occupied"
-                },
-                new TableStatus
-                {
-                    Id = 3,
-                    Description = "Unavailable"
-                }
-                );
             TableTypeConfiguration.Configuring(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }

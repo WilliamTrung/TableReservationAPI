@@ -23,8 +23,7 @@ namespace TableReservationAPI.Controllers
         {
             Console.WriteLine(Request.Headers["Authorization"]);
             var result = _tableManagementService.GetTableStatuses().Result;
-            var array = result.Select(c => c.Description);
-            return Ok(array);
+            return Ok(result);
         }
         [HttpGet("type")]
         [EnableQuery]

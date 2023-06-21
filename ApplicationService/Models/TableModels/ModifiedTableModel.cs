@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ApplicationService.Models.TableModels
     {
         public int Id { get; set; }
         public string TableDescription { get; set; } = null!;
-        public string TableStatus { get; set; } = null!;
+        public StatusEnum.TableStatus Status { get; set; } = StatusEnum.TableStatus.Available;
         public int Seat { get; set; }
         public bool Private { get; set; }
         public bool IsDeleted { get; set; }
@@ -25,7 +26,7 @@ namespace ApplicationService.Models.TableModels
                 Private = table.Type.Private,
                 Seat = table.Type.Seat,
                 TableDescription = table.Description,
-                TableStatus = table.Status.Description,
+                Status = table.Status,
                 IsDeleted = table.IsDeleted
             };
         }

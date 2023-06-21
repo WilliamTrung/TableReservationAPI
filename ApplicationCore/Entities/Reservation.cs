@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.IType;
+using ApplicationCore.Enum;
 
 namespace ApplicationCore.Entities
 {
@@ -17,9 +18,8 @@ namespace ApplicationCore.Entities
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(Table))]
-        public int? TableId { get; set; }
-        [ForeignKey(nameof(ReservationStatus))]
-        public int StatusId { get; set; }
+        public int? TableId { get; set; }        
+        public StatusEnum.ReservationStatus Status { get; set; } = StatusEnum.ReservationStatus.Pending;
         [ForeignKey(nameof(Review))]
         public int ReviewId { get; set; }
         [Range(1, int.MaxValue)]
@@ -33,7 +33,6 @@ namespace ApplicationCore.Entities
 
         public virtual User? User { get; set; }
         public virtual Table? Table { get; set; }
-        public virtual ReservationStatus? Status { get; set; }
         public virtual Review? Review { get; set; }
         
     }

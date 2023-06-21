@@ -1,4 +1,5 @@
-﻿using ApplicationService.Models.ReservationModels;
+﻿using ApplicationCore.Enum;
+using ApplicationService.Models.ReservationModels;
 using ApplicationService.Models.TableModels;
 using ApplicationService.UnitOfWork;
 using System;
@@ -31,7 +32,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="InvalidDataException"></exception>
         public Task AssignTable(int tableId, ReservationModel reservation)
         {
-            var task_table = _unitOfWork.TableRepository.Get(filter: t => t.Id == reservation.Id, includeProperties: "Type,Status");
+            var task_table = _unitOfWork.TableRepository.Get(filter: t => t.Id == reservation.Id, includeProperties: "Type");
             var task_reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id);
             Task.WaitAll(task_table, task_reservation);
             var table = task_table.Result.FirstOrDefault();
@@ -44,7 +45,7 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new InvalidOperationException();
             }
-            if(table.Type.Private != reservation.Private || table.Status.Description != "Available" || table.IsDeleted == true)
+            if(table.Type.Private != reservation.Private || table.Status != StatusEnum.TableStatus.Available || table.IsDeleted == true)
             {
                 throw new InvalidDataException();
             }
@@ -56,9 +57,7 @@ namespace ApplicationService.Services.Implementation
 
         public async Task<IEnumerable<ReservationModel>> GetPendingReservations()
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status.Description == "Pending", orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "Status");
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == StatusEnum.ReservationStatus.Pending, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: null);
             var result = new List<ReservationModel>();
             foreach (var item in pending_reservations)
             {
@@ -76,14 +75,14 @@ namespace ApplicationService.Services.Implementation
                 (DateTimeOffset.UtcNow.AddHours(GlobalValidation.DEADLINE_HOURS).CompareTo(r.ReservedTime) >= 0) &&
                 r.GuestAmount >= reservation.Seat &&
                 Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT &&
-                r.Status.Description != "Cancel" &&
+                r.Status != StatusEnum.ReservationStatus.Cancel &&
                 r.TableId != null,
                 orderBy: null, includeProperties: "Status"
                 );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             var task_desired_table_inday = _unitOfWork.TableRepository.Get(filter: table =>
                 table.IsDeleted == false &&
-                table.Status.Description == "Available" &&
+                table.Status == StatusEnum.TableStatus.Available &&
                 table.Type.Private == reservation.Private &&
                 table.Type.Seat >= reservation.Seat &&
                 Math.Abs(table.Type.Seat - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT

@@ -17,13 +17,11 @@ namespace ApplicationService.UnitOfWork.Implementation
 
         private GenericRepository<Rate>? _rateRepos;
         private GenericRepository<Reservation>? _reservationRepos;
-        private GenericRepository<ReservationStatus>? _reservationStatusRepos;
         private GenericRepository<Review>? _reviewRepos;
         private GenericRepository<ReviewRating>? _reviewRatingRepos;
         private GenericRepository<Role>? _roleRepos;
         private GenericRepository<Table>?    _tableRepos;
         private GenericRepository<User>? _userRepos;
-        private GenericRepository<TableStatus>? _tableStatusRepos;
         private GenericRepository<TableType>? _tableTypeRepos;
 
         public UnitOfWork(TableReservationContext context)
@@ -51,18 +49,6 @@ namespace ApplicationService.UnitOfWork.Implementation
                     _reservationRepos = new GenericRepository<Reservation>(_context);
                 }
                 return _reservationRepos;
-            }
-        }
-
-        public IGenericRepository<ReservationStatus> ReservationStatusRepository
-        {
-            get
-            {
-                if(_reservationStatusRepos == null)
-                {
-                    _reservationStatusRepos = new GenericRepository<ReservationStatus>(_context);
-                }
-                return _reservationStatusRepos;
             }
         }
 
@@ -114,17 +100,6 @@ namespace ApplicationService.UnitOfWork.Implementation
             }
         }
 
-        public IGenericRepository<TableStatus> TableStatusRepository
-        {
-            get
-            {
-                if(_tableStatusRepos == null)
-                {
-                    _tableStatusRepos = new GenericRepository<TableStatus>(_context);
-                }
-                return _tableStatusRepos;
-            }
-        }
 
         public IGenericRepository<TableType> TableTypeRepository
         {

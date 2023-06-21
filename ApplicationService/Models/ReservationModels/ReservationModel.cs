@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Validator;
+using ApplicationCore.Enum;
 
 namespace ApplicationService.Models.ReservationModels
 {
@@ -23,7 +24,7 @@ namespace ApplicationService.Models.ReservationModels
         // for reception only
         public int? AssignedTableId { get; set; }
         //system decide
-        public string Status { get; set; } = null!;
+        public StatusEnum.ReservationStatus Status { get; set; } 
 
 
         public static ReservationModel FromReservation(Reservation reservation)
@@ -40,7 +41,7 @@ namespace ApplicationService.Models.ReservationModels
                 ModifiedDate = reservation.Modified,
                 Note = reservation.Note,
                 AssignedTableId = reservation.TableId,
-                Status = reservation.Status.Description
+                Status = reservation.Status
             };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

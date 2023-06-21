@@ -30,7 +30,7 @@ namespace ApplicationService.Services
         Task UpdateTable(ModifiedTableModel table);
         Task DisableTable(int id);
         Task<IEnumerable<ModifiedTableModel>> GetTables();
-        Task<IEnumerable<TableStatusModel>> GetTableStatuses();
+        Task<IEnumerable<string>> GetTableStatuses();
         Task<IEnumerable<TableTypeModel>> GetTableTypes();
     }
 }

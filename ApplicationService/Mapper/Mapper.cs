@@ -15,7 +15,6 @@ namespace ApplicationService.Mapper
         public Mapper()
         {
             CreateMap<Role, RoleModel>().ReverseMap();            
-            CreateMap<TableStatus, TableStatusModel>().ReverseMap();
             CreateMap<TableType, TableTypeModel>().ReverseMap();
         }
     }

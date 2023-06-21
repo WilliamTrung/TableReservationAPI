@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Enum;
 using ApplicationService.Models.TableModels;
 using ApplicationService.UnitOfWork;
 using AutoMapper;
@@ -29,8 +30,9 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="MissingMemberException"></exception>
         public Task AddTable(NewTableModel table)
         {
-            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
-            if(checkStatus == null)
+            bool checkStatus = Enum.IsDefined(typeof(StatusEnum.TableStatus), table.Status);
+            
+            if(!checkStatus == false)
             {
                 throw new MissingMemberException("Selected status does not exist!");
             }
@@ -42,7 +44,7 @@ namespace ApplicationService.Services.Implementation
             var added = new Table
             {
                 Description = table.TableDescription,
-                StatusId = checkStatus.Id,
+                Status = table.Status,
                 TypeId = checkType.Id
             };
             _unitOfWork.TableRepository.Create(added);
@@ -69,11 +71,13 @@ namespace ApplicationService.Services.Implementation
             return Task.FromResult(result);
         }
 
-        public Task<IEnumerable<TableStatusModel>> GetTableStatuses()
+        public Task<IEnumerable<string>> GetTableStatuses()
         {
-            var list = _unitOfWork.TableStatusRepository.Get();
-            var result = _mapper.Map<IEnumerable<TableStatusModel>>(list.Result);
-            return Task.FromResult(result);
+            List<string> enumValues = Enum.GetValues(typeof(StatusEnum.TableStatus))
+                              .Cast<StatusEnum.TableStatus>()
+                              .Select(c => c.ToString())
+                              .ToList();
+            return Task.FromResult((IEnumerable<string>)enumValues);
         }
 
         public Task<IEnumerable<TableTypeModel>> GetTableTypes()
@@ -86,8 +90,10 @@ namespace ApplicationService.Services.Implementation
 
         public Task UpdateTable(ModifiedTableModel table)
         {
-            var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
-            if (checkStatus == null)
+            //var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
+            bool checkStatus = Enum.IsDefined(typeof(StatusEnum.TableStatus), table.Status);
+
+            if (!checkStatus)
             {
                 throw new MissingMethodException("Selected status does not exist!");
             }
@@ -100,7 +106,7 @@ namespace ApplicationService.Services.Implementation
             {
                 Id = table.Id,
                 Description = table.TableDescription,
-                StatusId = checkStatus.Id,
+                Status = table.Status,
                 TypeId = checkType.Id,
                 IsDeleted = table.IsDeleted
             };

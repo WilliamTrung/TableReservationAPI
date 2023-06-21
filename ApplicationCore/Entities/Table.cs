@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.IType;
+using ApplicationCore.Enum;
 
 namespace ApplicationCore.Entities
 {
@@ -18,8 +19,7 @@ namespace ApplicationCore.Entities
         public int StatusId { get; set; }
         public string Description { get; set; } = null!;
         public bool IsDeleted { get; set; } = false;
-
-        public virtual TableStatus Status { get; set; } = null!;
+        public StatusEnum.TableStatus Status { get; set; } = StatusEnum.TableStatus.Available;
         public virtual TableType Type { get; set; } = null!;
     }
 }

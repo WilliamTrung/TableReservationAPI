@@ -12,12 +12,10 @@ namespace ApplicationService.UnitOfWork
     {
         IGenericRepository<Rate> RateRepository { get; }
         IGenericRepository<Reservation> ReservationRepository { get; }
-        IGenericRepository<ReservationStatus> ReservationStatusRepository { get; }
         IGenericRepository<Review> ReviewRepository { get; }
         IGenericRepository<ReviewRating> ReviewRatingRepository { get; }
         IGenericRepository<Role> RoleRepository { get; }
         IGenericRepository<Table> TableRepository { get; }
-        IGenericRepository<TableStatus> TableStatusRepository { get; }
         IGenericRepository<TableType> TableTypeRepository { get; }
         IGenericRepository<User> UserRepository { get; }
 
