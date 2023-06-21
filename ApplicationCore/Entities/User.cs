@@ -19,7 +19,7 @@ namespace ApplicationCore.Entities
         public string Email { get; set; } = null!;
         [Required]
         [Phone]
-        public string Phone { get; set; } = null!;
+        public string? Phone { get; set; }
 
         public bool Lockout = false;
         public DateTimeOffset? LockoutEnd { get; set; }

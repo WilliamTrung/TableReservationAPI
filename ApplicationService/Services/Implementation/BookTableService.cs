@@ -32,7 +32,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="MemberAccessException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
-        public async Task CancelReservation(int reservationId, CustomerModel requester)
+        public async Task CancelReservation(int reservationId, AuthorizedModel requester)
         {
             var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId, includeProperties: "User,Status");
             var found = find.FirstOrDefault();
@@ -62,7 +62,6 @@ namespace ApplicationService.Services.Implementation
                 {
                     throw new KeyNotFoundException("Status Cancel is not found!");
                 }
-
             }
             else
             {
@@ -122,7 +121,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="MemberAccessException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
-        public async Task ModifiedReservation(CustomerModifiedReservationModel reservation, CustomerModel requester)
+        public async Task ModifiedReservation(CustomerModifiedReservationModel reservation, AuthorizedModel requester)
         {
             var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id, includeProperties: "User,Status");
             var found = find.FirstOrDefault();
@@ -169,7 +168,7 @@ namespace ApplicationService.Services.Implementation
         /// <param name="reservation"></param>
         /// <param name="requester"></param>
         /// <returns></returns>
-        public Task<bool> ValidateReservation(NewReservationModel reservation, CustomerModel requester)
+        public Task<bool> ValidateReservation(NewReservationModel reservation, AuthorizedModel requester)
         {                        
             var task_getVacantTablesOnDate = GetVacantTables(reservation.ToDesiredModel());
             var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>
@@ -197,12 +196,14 @@ namespace ApplicationService.Services.Implementation
         /// <summary>
         /// Add reservation through ValidateReservation
         /// <para>Throw InvalidOperationException: No vacant at current time</para>
+        /// <para>Throw MemberAccessException: Unauthorized requester</para>
         /// </summary>
         /// <param name="reservation"></param>
         /// <param name="requester"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task AddReservation(NewReservationModel reservation, CustomerModel requester)
+        /// <exception cref="MemberAccessException"></exception>
+        public async Task AddReservation(NewReservationModel reservation, AuthorizedModel requester)
         {
             if(await ValidateReservation(reservation, requester))
             {
@@ -216,6 +217,9 @@ namespace ApplicationService.Services.Implementation
                     newReservation.UserId = user.Id;
                     await _unitOfWork.ReservationRepository.Create(newReservation);
                     _unitOfWork.Commit();
+                } else
+                {
+                    throw new MemberAccessException("Unauthorized");
                 }
             } else
             {
@@ -230,7 +234,7 @@ namespace ApplicationService.Services.Implementation
         /// <param name="requester"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public async Task<ReservationModel> ViewCurrentReservation(CustomerModel requester)
+        public async Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status.Description == "Pending" && r.ReservedTime > DateTimeOffset.UtcNow, orderBy: null, includeProperties:"User,Status,Table");
@@ -248,7 +252,7 @@ namespace ApplicationService.Services.Implementation
             
         }
 
-        public async Task<IEnumerable<ReservationModel>> ViewHistoryReservations(CustomerModel requester)
+        public async Task<IEnumerable<ReservationModel>> ViewHistoryReservations(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status.Description != "Pending" && r.ReservedTime < DateTimeOffset.UtcNow, orderBy: null, includeProperties: "User,Status");

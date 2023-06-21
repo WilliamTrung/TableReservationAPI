@@ -36,7 +36,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rates");
+                    b.ToTable("Rates", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Reservation", b =>
@@ -87,7 +87,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ReservationStatus", b =>
@@ -104,7 +104,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationStatus");
+                    b.ToTable("ReservationStatus", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Review", b =>
@@ -123,7 +123,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ReviewRating", b =>
@@ -138,7 +138,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasIndex("RateId");
 
-                    b.ToTable("ReviewRating");
+                    b.ToTable("ReviewRating", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Role", b =>
@@ -155,7 +155,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -202,7 +202,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Tables");
+                    b.ToTable("Tables", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.TableStatus", b =>
@@ -219,7 +219,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TableStatuses");
+                    b.ToTable("TableStatuses", (string)null);
 
                     b.HasData(
                         new
@@ -258,7 +258,7 @@ namespace ApplicationCore.Migrations
                     b.HasIndex("Seat", "Private")
                         .IsUnique();
 
-                    b.ToTable("TableTypes");
+                    b.ToTable("TableTypes", (string)null);
 
                     b.HasData(
                         new
@@ -314,7 +314,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Reservation", b =>

@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Models.UserModels
 {
-    public class CustomerModel
+    public class AuthorizedModel
     {
         public string Email { get; set; } = null!;
         public string Role { get; set; } = null!;
 
-        public static CustomerModel Converter(User user)
+        public static AuthorizedModel Converter(User user)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            return new CustomerModel
+            return new AuthorizedModel
             {
                 Email = user.Email,
                 Role = user.Role.Name
