@@ -69,7 +69,7 @@ namespace ApplicationService.Services.Implementation
             {
                 await Register(email);
             } 
-            find = (await _unitOfWork.UserRepository.Get(filter: u => u.Email == email)).First();
+            find = (await _unitOfWork.UserRepository.Get(filter: u => u.Email == email, includeProperties: "Role")).First();
             return _jwtService.GenerateAccessToken(find);
         }
         private async Task<User?> ValidateEmailAsync(string email)

@@ -17,7 +17,6 @@ namespace ApplicationCore.Entities
         public int RoleId { get; set; }
         [Required]
         public string Email { get; set; } = null!;
-        [Required]
         [Phone]
         public string? Phone { get; set; }
 

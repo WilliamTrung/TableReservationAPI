@@ -72,7 +72,7 @@ namespace ApplicationService.Services.Implementation
         public Task<IEnumerable<TableStatusModel>> GetTableStatuses()
         {
             var list = _unitOfWork.TableStatusRepository.Get();
-            var result = _mapper.Map<IEnumerable<TableStatusModel>>(list);
+            var result = _mapper.Map<IEnumerable<TableStatusModel>>(list.Result);
             return Task.FromResult(result);
         }
 
@@ -80,7 +80,7 @@ namespace ApplicationService.Services.Implementation
         {
             var tableTypeRepos = _unitOfWork.TableTypeRepository;
             var list = tableTypeRepos.Get();
-            var result = _mapper.Map<IEnumerable<TableTypeModel>>(list);
+            var result = _mapper.Map<IEnumerable<TableTypeModel>>(list.Result);
             return Task.FromResult(result);
         }
 

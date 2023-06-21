@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace TableReservationAPI.Controllers
 {
     [Route("api/manage-table")]
-    [Authorize(Roles = "Reception,Administrator")]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     public class ManageTableController : ODataController
     {
@@ -21,6 +21,7 @@ namespace TableReservationAPI.Controllers
         [HttpGet("status")]
         public IActionResult GetTableStatuses()
         {
+            Console.WriteLine(Request.Headers["Authorization"]);
             var result = _tableManagementService.GetTableStatuses().Result;
             var array = result.Select(c => c.Description);
             return Ok(array);

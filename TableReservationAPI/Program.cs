@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using System.Text.Json.Serialization;
+using TableReservationAPI.SwaggerSupport;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,23 +86,33 @@ builder.Services.AddTransient<ILoginService, LoginService>();
 
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    opt.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
     {
-        Description = "Standard Authorization header using bearer scheme (\"bearer {token}\")",
+        Description = "Bearer token",
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.ApiKey,        
     });
     opt.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(
+        c =>
+        {
+            app.UseSwaggerAuthorization((context, next) =>
+            {
+                var token = context.Request.Headers["Authorization"];
+                Console.WriteLine(token);
+                context.Request.Headers.Add("Authorization", "Bearer " + token);
+                return next();
+            });
+        }
+    );
 }
 
 app.UseHttpsRedirection();
