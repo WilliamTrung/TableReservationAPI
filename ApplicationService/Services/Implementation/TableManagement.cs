@@ -61,7 +61,7 @@ namespace ApplicationService.Services.Implementation
 
         public Task<IEnumerable<ModifiedTableModel>> GetTables()
         {
-            var list = _unitOfWork.TableRepository.Get(filter: null, orderBy: null, includeProperties: "Status,Type").Result;
+            var list = _unitOfWork.TableRepository.Get(filter: null, orderBy: null, includeProperties: "Type").Result;
             var temp = new List<ModifiedTableModel>();
             foreach (var item in list)
             {
