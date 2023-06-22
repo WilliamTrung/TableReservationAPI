@@ -19,6 +19,8 @@ using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Text.Json.Serialization;
+using TableReservationAPI.CustomMiddleware;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -108,6 +110,20 @@ builder.Services.AddTransient<IReceptionService, ReceptionService>();
 builder.Services.AddTransient<IGoogleService, GoogleService>();
 builder.Services.AddTransient<ILoginService, LoginService>();
 
+string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
+string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Table Reservation API v1",
+        Version = "v1",
+        Description = guide_navToken + "<br/>" + guide_toPostman
+    });
+
+    // ...
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
@@ -115,10 +131,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Table Reservation API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Table Reservation API v1");//\nPass the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Nav to token credentials</a>");
         c.RoutePrefix = string.Empty; // Serve the Swagger UI at the root URL
         c.DefaultModelRendering(ModelRendering.Model); // Use the model visualization for the default model rendering
-        c.DocExpansion(DocExpansion.None); // Collapse all Swagger UI sections by default
     });
 }
 
