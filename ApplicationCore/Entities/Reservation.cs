@@ -19,7 +19,7 @@ namespace ApplicationCore.Entities
         public Guid UserId { get; set; }
         [ForeignKey(nameof(Table))]
         public int? TableId { get; set; }        
-        public StatusEnum.ReservationStatus Status { get; set; } = StatusEnum.ReservationStatus.Pending;
+        public IEnum.ReservationStatus Status { get; set; } = IEnum.ReservationStatus.Pending;
         [ForeignKey(nameof(Review))]
         public int ReviewId { get; set; }
         [Range(1, int.MaxValue)]

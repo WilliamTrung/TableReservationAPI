@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace ApplicationService.Models.UserModels
     public class AuthorizedModel
     {
         public string Email { get; set; } = null!;
-        public string Role { get; set; } = null!;
+        public IEnum.Role Role { get; set; }
+        public string? Phone { get; set; }
 
         public static AuthorizedModel Converter(User user)
         {
@@ -18,7 +20,8 @@ namespace ApplicationService.Models.UserModels
             return new AuthorizedModel
             {
                 Email = user.Email,
-                Role = user.Role.Name
+                Role = user.Role,
+                Phone = user.Phone,
             };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

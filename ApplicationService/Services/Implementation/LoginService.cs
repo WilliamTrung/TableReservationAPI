@@ -2,6 +2,7 @@
 using ApplicationService.Models;
 using ApplicationService.Models.UserModels;
 using ApplicationService.UnitOfWork;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -15,23 +16,25 @@ namespace ApplicationService.Services.Implementation
     public class LoginService : ILoginService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IJwtService _jwtService;
+        private readonly IGoogleService _googleService;
         private readonly Domain _domain;
-        public LoginService(IUnitOfWork unitOfWork, IJwtService jwtService, IOptions<Domain> domain)
+        public LoginService(IUnitOfWork unitOfWork, IGoogleService googleService, IOptions<Domain> domain)
         {
             _unitOfWork = unitOfWork;
-            _jwtService = jwtService;
+            _googleService = googleService;
             _domain = domain.Value;
-
         }
+
         /// <summary>
         /// Get AuthorizedModel from authorization token
         /// <para>Throw Exception: Not a bearer JWT token or No token</para>
+        /// <para>Throw InvalidJwtException: Invalid token or payload</para>
         /// </summary>
         /// <param name="authHeader"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public AuthorizedModel ValidateLogin(string? authHeader)
+        /// <exception cref="InvalidJwtException"></exception>
+        public async Task<AuthorizedModel> ValidateLoginAsync(string? authHeader)
         {
             if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
@@ -40,48 +43,37 @@ namespace ApplicationService.Services.Implementation
                 {
                     try
                     {
-                        var claims = _jwtService.ValidateToken(token);
-                        if (claims == null)
+                        var payload = _googleService.ValidateToken(token);
+                        if(payload != null)
                         {
-                            throw new Exception();
-                        }
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        return new AuthorizedModel
+                            var email = payload.Email;
+                            var user = await ValidateEmailAsync(email);
+                            if(user == null)
+                            {
+                                user = await Register(email);
+                            }
+                            return AuthorizedModel.Converter(user);
+                        } else
                         {
-                            Email = claims.FindFirst("Email").Value,
-                            Role = claims.FindFirst(ClaimTypes.Role).Value
-                        };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                            throw new InvalidJwtException("Unable to load payload!");
+                        }                        
                     }
                     catch
                     {
-                        throw new Exception("Invalid token");
+                        throw new InvalidJwtException("Invalid token");
                     }
                 }
             }
             throw new Exception("Unauthorized");
-        }
-
-        public async Task<string> GetAccessToken(string email)
-        {
-            var find = ValidateEmailAsync(email).Result;
-            if(find == null)
-            {
-                await Register(email);
-            } 
-            find = (await _unitOfWork.UserRepository.Get(filter: u => u.Email == email, includeProperties: "Role")).First();
-            return _jwtService.GenerateAccessToken(find);
         }
         private async Task<User?> ValidateEmailAsync(string email)
         {
             var find = await _unitOfWork.UserRepository.Get(filter: u => u.Email == email);
             return find.FirstOrDefault();
         }
-        public async Task Register(string email)
+        public async Task<User> Register(string email)
         {
             var task_find = _unitOfWork.UserRepository.Get(filter: u => u.Email == email);
-            var task_role = _unitOfWork.RoleRepository.Get();
-            Task.WaitAll(task_find, task_role);
             var found = task_find.Result.FirstOrDefault();
             if(found == null)
             {
@@ -89,17 +81,17 @@ namespace ApplicationService.Services.Implementation
                 {
                     Email = email
                 };
-                if (email.Substring(email.IndexOf('@')) == _domain.Name){
+                if (email.Substring(email.IndexOf('@') + 1) == _domain.Name){
                     //is staff
-                    user.RoleId = task_role.Result.First(r => r.Name == "Reception").Id;
+                    user.Role = ApplicationCore.Enum.IEnum.Role.Reception;
                 } else
                 {
                     //is customer
-                    user.RoleId = task_role.Result.First(r => r.Name == "Customer").Id;
+                    user.Role = ApplicationCore.Enum.IEnum.Role.Customer;
                 }
                 await _unitOfWork.UserRepository.Create(user);
                 _unitOfWork.Commit();
-
+                return user;
             } else
             {
                 throw new Exception("Already registered!");

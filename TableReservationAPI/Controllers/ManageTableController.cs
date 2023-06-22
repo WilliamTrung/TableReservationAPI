@@ -1,15 +1,17 @@
-﻿using ApplicationService.Models.TableModels;
+﻿using ApplicationService.Models;
+using ApplicationService.Models.TableModels;
 using ApplicationService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using TableReservationAPI.CustomMiddleware;
 
 namespace TableReservationAPI.Controllers
 {
     [Route("api/manage-table")]
-    [Authorize(Roles = "Administrator")]
+    [GoogleAuthorized(roles: "Reception,Administrator")]
     [ApiController]
     public class ManageTableController : ODataController
     {
@@ -21,7 +23,6 @@ namespace TableReservationAPI.Controllers
         [HttpGet("status")]
         public IActionResult GetTableStatuses()
         {
-            Console.WriteLine(Request.Headers["Authorization"]);
             var result = _tableManagementService.GetTableStatuses().Result;
             return Ok(result);
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Enum
 {
-    public class StatusEnum
+    public class IEnum
     {
         public enum TableStatus
         {
@@ -20,6 +20,12 @@ namespace ApplicationCore.Enum
             Active,
             Cancel,
             Complete
+        }
+        public enum Role
+        {
+            Administrator,
+            Customer,
+            Reception
         }
     }
 }

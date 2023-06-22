@@ -1,0 +1,72 @@
+﻿using ApplicationService.Models;
+using ApplicationService.Models.UserModels;
+using ApplicationService.Services;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Options;
+using System.Net;
+using System.Xml.Linq;
+
+namespace TableReservationAPI.CustomMiddleware
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    public class GoogleAuthorized : ActionFilterAttribute, IActionFilter
+    {
+        private bool isAuthorized = true;
+        private bool _requiredPhone;
+        private EnumModel.Role[] _roles;
+        private ILoginService _loginService = null!;
+        public GoogleAuthorized(string roles, bool requiredPhone = false)
+        {
+            var _roles_split = roles.Split(',');
+            _roles = _roles_split.Select(str => (EnumModel.Role)Enum.Parse(typeof(EnumModel.Role), str)).ToArray();
+            _requiredPhone = requiredPhone;
+        }
+        private void SetConfiguration(ActionExecutingContext context)
+        {
+            var serviceProvider = context.HttpContext.RequestServices;
+            _loginService = (ILoginService)serviceProvider.GetRequiredService(typeof(ILoginService));
+        }
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            string authHeader = context.HttpContext.Request.Headers["Authorization"];
+            Console.WriteLine(authHeader);
+            SetConfiguration(context);
+            AuthorizedModel? authorized = null;
+            string message = "Unauthorized";
+            try
+            {
+                authorized = _loginService.ValidateLoginAsync(authHeader).Result;
+                bool roleAuthorized = true;
+                bool phoneAuthorized = true;
+                if (_roles.Length > 0 && !_roles.Any(r => r == (EnumModel.Role)authorized.Role))
+                {
+                    //role authorizing
+                    roleAuthorized = false;
+                    message += " - Unauthorized for this function!";
+                }
+                if(_requiredPhone && authorized.Phone == null)
+                {
+                    //phone authorizing
+                    phoneAuthorized = false;
+                    message += " - Phone required";
+                }
+                isAuthorized = roleAuthorized && phoneAuthorized;
+            }
+            catch (Exception)
+            {
+                isAuthorized = false;
+            }
+            if (!isAuthorized)
+            {
+                context.Result = context.Result = new ObjectResult(message)
+                {
+                    StatusCode = (int)HttpStatusCode.Unauthorized
+                };
+                return;
+            }
+        }
+    }
+}

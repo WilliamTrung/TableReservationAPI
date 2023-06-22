@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Google.Apis.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Services
 {
-    public interface IJwtService
+    public interface IGoogleService
     {
-        string GenerateAccessToken(User user);
-        ClaimsPrincipal? ValidateToken(string token, bool validateLifetime = true);
+        GoogleJsonWebSignature.Payload? ValidateToken(string token);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ApplicationService.Models.UserModels;
+﻿using ApplicationCore.Entities;
+using ApplicationService.Models.UserModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,16 @@ namespace ApplicationService.Services
 {
     public interface ILoginService
     {
-        AuthorizedModel ValidateLogin(string? authHeader);
         /// <summary>
-        /// Get the user credentials -- if not exist --> create new credentials and return it
+        /// Get AuthorizedModel from authorization token
+        /// <para>Throw Exception: Not a bearer JWT token or No token</para>
+        /// <para>Throw InvalidJwtException: Invalid token or payload</para>
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="authHeader"></param>
         /// <returns></returns>
-        Task<string> GetAccessToken(string email);
-        Task Register(string email);
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="InvalidJwtException"></exception>
+        Task<AuthorizedModel> ValidateLoginAsync(string? authHeader);
+        Task<User> Register(string email);
     }
 }

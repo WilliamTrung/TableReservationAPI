@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace TableReservationAPI.Controllers
 {
     [Route("api/booking-reservation")]
+    [Authorize(Roles = "Customer")]
     
     [ApiController]
     public class BookReservationController : ODataController
@@ -33,7 +34,7 @@ namespace TableReservationAPI.Controllers
             
             try
             {
-                var customer = _loginService.ValidateLogin(Request.Headers["Authorization"]);
+                var customer = await _loginService.ValidateLoginAsync(Request.Headers["Authorization"]);
                 await _bookTableService.AddReservation(newReservation, customer);                
                 return Ok(StatusCode(StatusCodes.Status201Created));
             }
@@ -56,7 +57,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                var customer = _loginService.ValidateLogin(Request.Headers["Authorization"]);
+                var customer = await _loginService.ValidateLoginAsync(Request.Headers["Authorization"]);
                 await _bookTableService.ModifiedReservation(modifiedReservation, customer);
                 return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
@@ -83,7 +84,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                var customer = _loginService.ValidateLogin(Request.Headers["Authorization"]);
+                var customer = await _loginService.ValidateLoginAsync(Request.Headers["Authorization"]);
                 await _bookTableService.CancelReservation(reservationId, customer);
                 return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
@@ -110,7 +111,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                var customer = _loginService.ValidateLogin(Request.Headers["Authorization"]);
+                var customer = await _loginService.ValidateLoginAsync(Request.Headers["Authorization"]);
                 var found = await _bookTableService.ViewCurrentReservation(customer);
                 return Ok(found);
             }
@@ -129,7 +130,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                var customer = _loginService.ValidateLogin(Request.Headers["Authorization"]);
+                var customer = await _loginService.ValidateLoginAsync(Request.Headers["Authorization"]);
                 var list = await _bookTableService.ViewHistoryReservations(customer);
                 return Ok(list);
             }

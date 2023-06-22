@@ -24,7 +24,7 @@ namespace ApplicationService.Models.ReservationModels
         // for reception only
         public int? AssignedTableId { get; set; }
         //system decide
-        public StatusEnum.ReservationStatus Status { get; set; } 
+        public IEnum.ReservationStatus Status { get; set; } 
 
 
         public static ReservationModel FromReservation(Reservation reservation)

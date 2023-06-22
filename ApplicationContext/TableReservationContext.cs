@@ -40,23 +40,6 @@ namespace ApplicationContext
             modelBuilder.Entity<ReviewRating>().HasKey(c => new { c.ReviewId, c.RateId});
             modelBuilder.Entity<ReviewRating>().HasOne(c => c.Review).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.ReviewId);
             modelBuilder.Entity<ReviewRating>().HasOne(c => c.Rate).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.RateId);
-
-            modelBuilder.Entity<Role>().HasData(
-                new Role
-                {
-                    Id = 1,
-                    Name = "Administrator"
-                },
-                new Role
-                {
-                    Id = 3,
-                    Name = "Customer"
-                },
-                new Role
-                {
-                    Id = 2,
-                    Name = "Reception"
-                });
             TableTypeConfiguration.Configuring(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }

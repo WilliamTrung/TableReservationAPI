@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApplicationCore.Enum;
 
 namespace ApplicationCore.Entities
 {
@@ -12,9 +13,8 @@ namespace ApplicationCore.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-        [ForeignKey(nameof(Role))]
-        public int RoleId { get; set; }
+        public Guid Id { get; set; }        
+        public IEnum.Role Role { get; set; } = IEnum.Role.Customer;
         [Required]
         public string Email { get; set; } = null!;
         [Phone]
@@ -22,8 +22,6 @@ namespace ApplicationCore.Entities
 
         public bool Lockout = false;
         public DateTimeOffset? LockoutEnd { get; set; }
-        public int LockoutCount { get; set; }  = 0;
-
-        public virtual Role? Role { get; set; }
+        public int LockoutCount { get; set; }  = 0;        
     }
 }

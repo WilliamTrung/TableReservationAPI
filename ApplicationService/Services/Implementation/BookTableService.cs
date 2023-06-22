@@ -51,7 +51,7 @@ namespace ApplicationService.Services.Implementation
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }
-                found.Status = StatusEnum.ReservationStatus.Cancel;
+                found.Status = IEnum.ReservationStatus.Cancel;
                 await _unitOfWork.ReservationRepository.Update(found);
                 _unitOfWork.Commit();
 
@@ -72,7 +72,7 @@ namespace ApplicationService.Services.Implementation
         {
             var task_desired_table_inday = _unitOfWork.TableRepository.Get(filter: table =>
                 table.IsDeleted == false &&
-                table.Status == StatusEnum.TableStatus.Available &&
+                table.Status == IEnum.TableStatus.Available &&
                 table.Type.Private == desired.Private &&
                 table.Type.Seat >= desired.Seat &&
                 Math.Abs(table.Type.Seat - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT
@@ -83,7 +83,7 @@ namespace ApplicationService.Services.Implementation
                 (DateTimeOffset.UtcNow.AddHours(2).AddMinutes(50).CompareTo(r.ReservedTime) >= 0) &&
                 r.GuestAmount >= desired.Seat &&
                 Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT && 
-                r.Status != StatusEnum.ReservationStatus.Cancel,
+                r.Status != IEnum.ReservationStatus.Cancel,
                 orderBy: null, includeProperties: "Status"
                 );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -228,7 +228,7 @@ namespace ApplicationService.Services.Implementation
         public async Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == StatusEnum.ReservationStatus.Pending && r.ReservedTime > DateTimeOffset.UtcNow, orderBy: null, includeProperties:"User,Table");
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTimeOffset.UtcNow, orderBy: null, includeProperties:"User,Table");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             var reservation = find.FirstOrDefault();
@@ -247,7 +247,7 @@ namespace ApplicationService.Services.Implementation
         public async Task<IEnumerable<ReservationModel>> ViewHistoryReservations(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status != StatusEnum.ReservationStatus.Pending && r.ReservedTime < DateTimeOffset.UtcNow, orderBy: null, includeProperties: "User");
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status != IEnum.ReservationStatus.Pending && r.ReservedTime < DateTimeOffset.UtcNow, orderBy: null, includeProperties: "User");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             var result = new List<ReservationModel>();
             foreach (var item in reservations)

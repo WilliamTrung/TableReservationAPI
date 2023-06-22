@@ -30,7 +30,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="MissingMemberException"></exception>
         public Task AddTable(NewTableModel table)
         {
-            bool checkStatus = Enum.IsDefined(typeof(StatusEnum.TableStatus), table.Status);
+            bool checkStatus = Enum.IsDefined(typeof(IEnum.TableStatus), table.Status);
             
             if(!checkStatus == false)
             {
@@ -73,8 +73,8 @@ namespace ApplicationService.Services.Implementation
 
         public Task<IEnumerable<string>> GetTableStatuses()
         {
-            List<string> enumValues = Enum.GetValues(typeof(StatusEnum.TableStatus))
-                              .Cast<StatusEnum.TableStatus>()
+            List<string> enumValues = Enum.GetValues(typeof(IEnum.TableStatus))
+                              .Cast<IEnum.TableStatus>()
                               .Select(c => c.ToString())
                               .ToList();
             return Task.FromResult((IEnumerable<string>)enumValues);
@@ -91,7 +91,7 @@ namespace ApplicationService.Services.Implementation
         public Task UpdateTable(ModifiedTableModel table)
         {
             //var checkStatus = _unitOfWork.TableStatusRepository.Get(filter: status => status.Description.ToUpper() == table.TableStatus.ToUpper()).Result.FirstOrDefault();
-            bool checkStatus = Enum.IsDefined(typeof(StatusEnum.TableStatus), table.Status);
+            bool checkStatus = Enum.IsDefined(typeof(IEnum.TableStatus), table.Status);
 
             if (!checkStatus)
             {

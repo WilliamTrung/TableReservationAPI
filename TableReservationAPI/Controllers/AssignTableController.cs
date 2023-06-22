@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace TableReservationAPI.Controllers
 {
-    [Authorize(Roles = "Reception")]
+    [Authorize(Roles = "Reception,Administrator")]
     [Route("api/assign-table")]
     [ApiController]
     public class AssignTableController : ODataController

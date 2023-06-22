@@ -19,7 +19,7 @@ namespace ApplicationCore.Entities
         public int StatusId { get; set; }
         public string Description { get; set; } = null!;
         public bool IsDeleted { get; set; } = false;
-        public StatusEnum.TableStatus Status { get; set; } = StatusEnum.TableStatus.Available;
+        public IEnum.TableStatus Status { get; set; } = IEnum.TableStatus.Available;
         public virtual TableType Type { get; set; } = null!;
     }
 }

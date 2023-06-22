@@ -12,7 +12,7 @@ namespace ApplicationService.Models.TableModels
     {
         public int Id { get; set; }
         public string TableDescription { get; set; } = null!;
-        public StatusEnum.TableStatus Status { get; set; } 
+        public IEnum.TableStatus Status { get; set; } 
         public int Seat { get; set; }
         public bool Private { get; set; }
 
