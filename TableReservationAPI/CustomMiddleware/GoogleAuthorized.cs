@@ -54,6 +54,17 @@ namespace TableReservationAPI.CustomMiddleware
                     message += " - Phone required";
                 }
                 isAuthorized = roleAuthorized && phoneAuthorized;
+                if (!isAuthorized)
+                {
+                    if (_roles.Length > 0)
+                    {
+                        message += " - Required Role(s): " + GetAlertRequiredRoles();
+                        if (authorized != null)
+                        {
+                            message += " - Current role: " + authorized.Role;
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
@@ -61,12 +72,23 @@ namespace TableReservationAPI.CustomMiddleware
             }
             if (!isAuthorized)
             {
+                         
                 context.Result = context.Result = new ObjectResult(message)
                 {
                     StatusCode = (int)HttpStatusCode.Unauthorized
                 };
                 return;
             }
+        }
+        private string GetAlertRequiredRoles()
+        {
+            string result = "";
+            foreach (var item in _roles)
+            {
+                result += item + ",";
+            }
+            result = result.Substring(0, result.Length - 1);
+            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using ApplicationService.Models.UserModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace ApplicationService.Services
 {
     public interface IUserService
     {
-         
+         Task ChangePhoneNumber(UpdatePhoneModel phoneModel, AuthorizedModel requester);
     }
 }

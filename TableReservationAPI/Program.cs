@@ -112,14 +112,15 @@ builder.Services.AddTransient<ILoginService, LoginService>();
 
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
+string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Table Reservation API v1",
         Version = "v1",
-        Description = guide_navToken + "<br/>" + guide_toPostman
-    });
+        Description = guide_navToken + "<br/>" + guide_toPostman + "<br/>" + guide_roleAlert
+    }); ;
 
     // ...
 });
