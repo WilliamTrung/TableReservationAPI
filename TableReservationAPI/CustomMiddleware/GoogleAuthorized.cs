@@ -61,7 +61,7 @@ namespace TableReservationAPI.CustomMiddleware
                         message += " - Required Role(s): " + GetAlertRequiredRoles();
                         if (authorized != null)
                         {
-                            message += " - Current role: " + authorized.Role;
+                            message += " - Current role: " + authorized.Role.ToString();
                         }
                     }
                 }
