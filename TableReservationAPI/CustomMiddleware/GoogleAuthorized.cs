@@ -16,13 +16,17 @@ namespace TableReservationAPI.CustomMiddleware
     {
         private bool isAuthorized = true;
         private bool _requiredPhone;
-        private EnumModel.Role[] _roles;
+        private List<EnumModel.Role> _roles = new List<EnumModel.Role>();
         private ILoginService _loginService = null!;
         public GoogleAuthorized(string roles, bool requiredPhone = false)
         {
             var _roles_split = roles.Split(',');
-            _roles = _roles_split.Select(str => (EnumModel.Role)Enum.Parse(typeof(EnumModel.Role), str)).ToArray();
+            _roles = _roles_split.Select(str => (EnumModel.Role)Enum.Parse(typeof(EnumModel.Role), str)).ToList();
             _requiredPhone = requiredPhone;
+        }
+        public GoogleAuthorized(bool requiredPhone = false)
+        {
+            _requiredPhone = requiredPhone;    
         }
         private void SetConfiguration(ActionExecutingContext context)
         {
@@ -41,7 +45,7 @@ namespace TableReservationAPI.CustomMiddleware
                 authorized = _loginService.ValidateLoginAsync(authHeader).Result;
                 bool roleAuthorized = true;
                 bool phoneAuthorized = true;
-                if (_roles.Length > 0 && !_roles.Any(r => r == (EnumModel.Role)authorized.Role))
+                if (_roles.Count > 0 && !_roles.Any(r => r == (EnumModel.Role)authorized.Role))
                 {
                     //role authorizing
                     roleAuthorized = false;
@@ -56,7 +60,7 @@ namespace TableReservationAPI.CustomMiddleware
                 isAuthorized = roleAuthorized && phoneAuthorized;
                 if (!isAuthorized)
                 {
-                    if (_roles.Length > 0)
+                    if (_roles.Count > 0)
                     {
                         message += " - Required Role(s): " + GetAlertRequiredRoles();
                         if (authorized != null)

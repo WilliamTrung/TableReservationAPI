@@ -11,7 +11,7 @@ namespace Validator
 
     public class PhoneValidator : ValidationAttribute
     {
-        private const string Pattern = @"^\+[1-9]\d{1,3}\s?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}$";
+        private const string Pattern = @"^(?:\+?84|0)(?:\d{9}|(?:\d{2}-\d{3}-\d{4})|(?:\d{3}-\d{2}-\d{2}-\d{2}))$";
 
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {

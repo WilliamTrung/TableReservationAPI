@@ -25,7 +25,7 @@ namespace ApplicationService.Services.Implementation
                 throw new KeyNotFoundException();
             }
             user.Phone = phoneModel.Phone;
-            await _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.UserRepository.Update(user, user.Id);
             _unitOfWork.Commit();
         }
     }

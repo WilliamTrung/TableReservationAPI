@@ -10,6 +10,6 @@ namespace ApplicationService.Services
 {
     public interface IUserService
     {
-         Task ChangePhoneNumber(UpdatePhoneModel phoneModel, AuthorizedModel requester);
+         Task ChangePhoneNumber(UpdatePhoneModel phoneModel, AuthorizedModel requester);        
     }
 }

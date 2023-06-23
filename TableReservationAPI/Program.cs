@@ -109,19 +109,22 @@ builder.Services.AddTransient<IBookTableService, BookTableService>();
 builder.Services.AddTransient<IReceptionService, ReceptionService>();
 builder.Services.AddTransient<IGoogleService, GoogleService>();
 builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
+string current_version = "v1.1.0";
+string br = "<br/>";
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc(current_version, new OpenApiInfo
     {
-        Title = "Table Reservation API v1",
-        Version = "v1",
-        Description = guide_navToken + "<br/>" + guide_toPostman + "<br/>" + guide_roleAlert
-    }); ;
-
+        Title = "Table Reservation API v1.1.0",
+        Version = "v1.1.0",
+        Description = guide_navToken + br + guide_toPostman + br + guide_roleAlert +
+            br + br + "v1.1.0" + " - Implement profile management"
+    });
     // ...
 });
 
@@ -132,7 +135,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Table Reservation API v1");//\nPass the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Nav to token credentials</a>");
+        c.SwaggerEndpoint("/swagger/"+current_version+"/swagger.json", "Table Reservation API " + current_version);
         c.RoutePrefix = string.Empty; // Serve the Swagger UI at the root URL
         c.DefaultModelRendering(ModelRendering.Model); // Use the model visualization for the default model rendering
     });

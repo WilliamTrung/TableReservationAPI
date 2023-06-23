@@ -52,7 +52,7 @@ namespace ApplicationService.Services.Implementation
                     throw new InvalidOperationException("Exceed deadline");
                 }
                 found.Status = IEnum.ReservationStatus.Cancel;
-                await _unitOfWork.ReservationRepository.Update(found);
+                await _unitOfWork.ReservationRepository.Update(found, found.Id);
                 _unitOfWork.Commit();
 
             }
