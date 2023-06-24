@@ -4,6 +4,7 @@ using ApplicationService.Models.ReservationModels;
 using ApplicationService.Models.TableModels;
 using ApplicationService.Models.UserModels;
 using ApplicationService.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace ApplicationService.Services.Implementation
                 }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 //modifiying
-                if (!(found.ReservedTime > DateTimeOffset.UtcNow.AddHours(GlobalValidation.DEADLINE_HOURS)))
+                if (!(found.ReservedTime > DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }
@@ -80,9 +81,10 @@ namespace ApplicationService.Services.Implementation
                 Math.Abs(table.Type.Seat - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT
                 , orderBy: null, includeProperties: "Type");
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var current_time = DateTimeOffset.Now;
             var task_reservations_inday = _unitOfWork.ReservationRepository.Get(filter: r => 
                 r.ReservedTime.Date.Equals(desired.DesiredDate) &&
-                (DateTimeOffset.UtcNow.AddHours(2).AddMinutes(50).DateTime <= r.ReservedTime) &&
+                (current_time.AddHours(2).AddMinutes(50).DateTime <= r.ReservedTime) &&
                 r.GuestAmount >= desired.Seat &&
                 Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT && 
                 r.Status != IEnum.ReservationStatus.Cancel,
@@ -130,7 +132,7 @@ namespace ApplicationService.Services.Implementation
                 }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 //modifiying
-                if(!(found.ReservedTime > DateTimeOffset.UtcNow.AddHours(GlobalValidation.DEADLINE_HOURS)))
+                if(!(found.ReservedTime > DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }
@@ -155,7 +157,7 @@ namespace ApplicationService.Services.Implementation
 
                     if (modified_reservedTime)
                     {
-                        await _queueService.ScheduleReservationCheckin(found.Id, found.Modified.DateTime, found.ReservedTime.DateTime.AddMinutes(30));
+                        await _queueService.ScheduleReservationCheckin(found.Id, found.Modified, found.ReservedTime.AddMinutes(30));
                     }
                 } else
                 {
@@ -173,18 +175,32 @@ namespace ApplicationService.Services.Implementation
         /// <param name="reservation"></param>
         /// <param name="requester"></param>
         /// <returns></returns>
+        /// <exception cref="InvalidDataException"></exception>
         public Task<bool> ValidateReservation(NewReservationModel reservation, AuthorizedModel requester)
-        {                        
+        {
+            var t = reservation.DesiredDate.ToDateTime(reservation.DesiredTime);
+            var r2 = DateTime.Now.AddHours(2).AddMinutes(30);
+            if (reservation.DesiredDate.ToDateTime(reservation.DesiredTime) < DateTime.Now.AddHours(2).AddMinutes(30))
+            {
+                throw new InvalidDataException();
+            }
             var task_getVacantTablesOnDate = GetVacantTables(reservation.ToDesiredModel());
-            var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>
-                    (r.ReservedTime.AddHours(GlobalValidation.BOUNDARY_HOURS).TimeOfDay == reservation.DesiredTime.ToTimeSpan() ||
-                    r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan()) &&
-                    Math.Abs(reservation.Seat - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
+            //var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>
+            //        (r.ReservedTime.Add(TimeSpan.FromHours(GlobalValidation.BOUNDARY_HOURS)).TimeOfDay == reservation.DesiredTime.ToTimeSpan() ||
+            //        r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan()) &&
+            //        Math.Abs(reservation.Seat - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
+            //        );
+            var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>          
+                    r.Status == IEnum.ReservationStatus.Pending &&
+                    Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
                     );
             Task.WaitAll(task_reservations, task_getVacantTablesOnDate);
             //int checkVacantOnDate = getVacantTablesOnDate.Where(v => v.Time == reservation.DesiredTime).Count();
             var getVacantTableOnTime = task_getVacantTablesOnDate.Result.First(t => t.Time == reservation.DesiredTime);
-            var amountReservations = task_reservations.Result.Count();
+            var reservations = task_reservations.Result.ToList();
+            reservations = reservations.Where(r => r.ReservedTime.Day == reservation.DesiredDate.Day && (r.ReservedTime.Add(TimeSpan.FromHours(GlobalValidation.BOUNDARY_HOURS)).TimeOfDay == reservation.DesiredTime.ToTimeSpan() ||
+                    r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan())).ToList();
+            var amountReservations = reservations.Count();
             var count_available = getVacantTableOnTime.Amount - amountReservations;
             if(count_available > 0)
             {
@@ -209,28 +225,35 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="MemberAccessException"></exception>
         public async Task AddReservation(NewReservationModel reservation, AuthorizedModel requester)
-        {
-            if(await ValidateReservation(reservation, requester))
+        {      
+            try
             {
-                var task_user = await _unitOfWork.UserRepository.Get(filter: u => u.Email == requester.Email);
-                var user = task_user.FirstOrDefault();
-                if (user != null)
+                if (await ValidateReservation(reservation, requester))
                 {
-                    var newReservation = reservation.ToReservation();
-                    newReservation.UserId = user.Id;
-                    await _unitOfWork.ReservationRepository.Create(newReservation);
-                    _unitOfWork.Commit();
+                    var task_user = await _unitOfWork.UserRepository.Get(filter: u => u.Email == requester.Email);
+                    var user = task_user.FirstOrDefault();
+                    if (user != null)
+                    {
+                        var newReservation = reservation.ToReservation();
+                        newReservation.UserId = user.Id;
+                        await _unitOfWork.ReservationRepository.Create(newReservation);
+                        _unitOfWork.Commit();
 
-                    await _queueService.ScheduleReservationCheckin(newReservation.Id, newReservation.Modified.DateTime, newReservation.ReservedTime.DateTime.AddMinutes(30));
-                } else
-                {
-                    throw new MemberAccessException("Unauthorized");
+                        var t = _queueService.ScheduleReservationCheckin(newReservation.Id, newReservation.Modified, newReservation.ReservedTime.AddMinutes(30)).IsCompleted;
+                    }
+                    else
+                    {
+                        throw new MemberAccessException("Unauthorized");
+                    }
                 }
-            } else
+                else
+                {
+                    throw new InvalidOperationException("The last vacant has been occupied!");
+                }
+            } catch (InvalidDataException)
             {
-                throw new InvalidOperationException("The last vacant has been occupied!");
-            }
-                                 
+                throw new InvalidOperationException("Invalid time to make a reservation!");
+            }                  
         }
         /// <summary>
         /// Get pending reservation
@@ -242,7 +265,7 @@ namespace ApplicationService.Services.Implementation
         public async Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTimeOffset.UtcNow, orderBy: null, includeProperties:"User,Table");
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTimeOffset.Now, orderBy: null, includeProperties:"User,Table");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             var reservation = find.FirstOrDefault();
@@ -261,7 +284,7 @@ namespace ApplicationService.Services.Implementation
         public async Task<IEnumerable<ReservationModel>> ViewHistoryReservations(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status != IEnum.ReservationStatus.Pending && r.ReservedTime < DateTimeOffset.UtcNow, orderBy: null, includeProperties: "User");
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status != IEnum.ReservationStatus.Pending && r.ReservedTime < DateTimeOffset.Now, orderBy: null, includeProperties: "User");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             var result = new List<ReservationModel>();
             foreach (var item in reservations)

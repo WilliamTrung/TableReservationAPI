@@ -83,7 +83,7 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new ArgumentNullException("No pending reservation!");
             }
-            if(!(DateTimeOffset.UtcNow >= reservation.ReservedTime && DateTimeOffset.UtcNow <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
+            if(!(DateTimeOffset.Now >= reservation.ReservedTime && DateTimeOffset.Now <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
             {
                 throw new InvalidOperationException("Must only be checked in within " + reservation.ReservedTime + " - " + reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY));
             }
@@ -116,7 +116,7 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new ArgumentNullException("No active reservation!");
             }
-            if (!(DateTimeOffset.UtcNow <= reservation.Modified.AddMinutes(GlobalValidation.CHECKOUT_MAX)))
+            if (!(DateTimeOffset.Now <= reservation.Modified.AddMinutes(GlobalValidation.CHECKOUT_MAX)))
             {
                 throw new InvalidOperationException("Must only be checked out within " + GlobalValidation.CHECKOUT_MAX + " minutes after check-in!");
             }
@@ -124,7 +124,7 @@ namespace ApplicationService.Services.Implementation
             await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
             _unitOfWork.Commit();
 
-            await _queueService.ScheduleReservationCheckout(reservation.Id, reservation.Modified.DateTime, reservation.Modified.DateTime.AddMinutes(150));
+            await _queueService.ScheduleReservationCheckout(reservation.Id, reservation.Modified, reservation.Modified.AddMinutes(150));
         }
 
         public async Task<IEnumerable<ReservationModel>> GetPendingReservations()
@@ -144,7 +144,7 @@ namespace ApplicationService.Services.Implementation
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var task_reservations_atTime = _unitOfWork.ReservationRepository.Get(filter: r =>
                 r.ReservedTime.Date.Equals(reservation.Date) &&
-                (DateTimeOffset.UtcNow.AddHours(GlobalValidation.DEADLINE_HOURS).CompareTo(r.ReservedTime) >= 0) &&
+                (DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS).CompareTo(r.ReservedTime) >= 0) &&
                 r.GuestAmount >= reservation.Seat &&
                 Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT &&
                 r.Status != IEnum.ReservationStatus.Cancel &&

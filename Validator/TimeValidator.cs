@@ -14,7 +14,7 @@ namespace Validator
 
         public override bool IsValid(object value)
         {
-            if (value is DateTime time)
+            if (value is TimeOnly time)
             {
                 if (IsOclock(time))
                 {
@@ -32,14 +32,14 @@ namespace Validator
             return false;
         }
 
-        private bool IsOclock(DateTime time)
+        private bool IsOclock(TimeOnly time)
         {
             return time.Minute == 0 && time.Second == 0;
         }
 
-        private bool IsBetween(DateTime time, TimeSpan startTime, TimeSpan endTime)
+        private bool IsBetween(TimeOnly time, TimeSpan startTime, TimeSpan endTime)
         {
-            TimeSpan currentTime = time.TimeOfDay;
+            TimeSpan currentTime = time.ToTimeSpan();
             return currentTime >= startTime && currentTime <= endTime;
         }
 

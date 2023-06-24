@@ -23,8 +23,8 @@ namespace ApplicationRepository.Repository.Implementation
         {
             if (entity is IAuditEntity)
             {
-                ((IAuditEntity)entity).Created = DateTime.UtcNow;
-                ((IAuditEntity)entity).Modified = DateTime.UtcNow;
+                ((IAuditEntity)entity).Created = DateTime.Now;
+                ((IAuditEntity)entity).Modified = DateTime.Now;
             }
             if (entity is ISoftDeleteEntity)
             {
@@ -79,7 +79,7 @@ namespace ApplicationRepository.Repository.Implementation
             {
                 if (entity is IAuditEntity)
                 {
-                    ((IAuditEntity)entity).Modified = DateTime.UtcNow;
+                    ((IAuditEntity)entity).Modified = DateTime.Now;
                 }
                 _context.Entry(find).CurrentValues.SetValues(entity);
                 return Task.CompletedTask;

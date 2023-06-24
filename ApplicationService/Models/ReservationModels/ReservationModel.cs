@@ -19,7 +19,7 @@ namespace ApplicationService.Models.ReservationModels
         public bool Private { get; set; }
         public DateOnly Date { get; set; }        
         public TimeOnly Time { get; set; }
-        public DateTimeOffset ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
         public string? Note { get; set; } = null!;
         // for reception only
         public int? AssignedTableId { get; set; }
@@ -36,8 +36,8 @@ namespace ApplicationService.Models.ReservationModels
                 Id = reservation.Id,
                 Seat = reservation.GuestAmount,
                 Private = reservation.Private,
-                Date = DateOnly.FromDateTime(reservation.ReservedTime.DateTime),
-                Time = TimeOnly.FromDateTime(reservation.ReservedTime.DateTime),
+                Date = DateOnly.FromDateTime(reservation.ReservedTime),
+                Time = TimeOnly.FromDateTime(reservation.ReservedTime),
                 ModifiedDate = reservation.Modified,
                 Note = reservation.Note,
                 AssignedTableId = reservation.TableId,

@@ -21,7 +21,7 @@ namespace ApplicationCore.Entities
         public string? Phone { get; set; }
 
         public bool Lockout = false;
-        public DateTimeOffset? LockoutEnd { get; set; }
+        public DateTime? LockoutEnd { get; set; }
         public int LockoutCount { get; set; }  = 0;        
     }
 }

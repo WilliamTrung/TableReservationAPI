@@ -14,6 +14,7 @@ namespace ApplicationService.CustomJsonConverter
         public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             string timeString = reader.GetString();
+            var time = TimeOnly.Parse(timeString); 
             return TimeOnly.Parse(timeString);
         }
 

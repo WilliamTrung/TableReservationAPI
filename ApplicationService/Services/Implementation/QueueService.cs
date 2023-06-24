@@ -34,7 +34,9 @@ namespace ApplicationService.Services.Implementation
 
             if (delay.TotalMilliseconds > 0)
             {
+                Console.WriteLine("Await Task" + task.ToString());
                 await Task.Delay(delay);
+                
                 await task;
             }
         }

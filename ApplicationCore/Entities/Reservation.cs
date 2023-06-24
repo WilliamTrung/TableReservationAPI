@@ -21,13 +21,13 @@ namespace ApplicationCore.Entities
         public int? TableId { get; set; }        
         public IEnum.ReservationStatus Status { get; set; } = IEnum.ReservationStatus.Pending;
         [ForeignKey(nameof(Review))]
-        public int ReviewId { get; set; }
+        public int? ReviewId { get; set; }
         [Range(1, int.MaxValue)]
         public int GuestAmount { get; set; }  
-        public DateTimeOffset Created { get; set; }
-        public DateTimeOffset Modified { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
         [Required]
-        public DateTimeOffset ReservedTime { get; set; }
+        public DateTime ReservedTime { get; set; }
         public bool Private { get; set; } = false;
         public string? Note { get; set; }
 

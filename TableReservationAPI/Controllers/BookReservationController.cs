@@ -27,7 +27,6 @@ namespace TableReservationAPI.Controllers
             var vacants = _bookTableService.GetVacantTables(desired).Result;
             return Ok(vacants);             
         }
-        [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> AddReservationAsync(NewReservationModel newReservation)
         {
@@ -38,9 +37,9 @@ namespace TableReservationAPI.Controllers
                 await _bookTableService.AddReservation(newReservation, customer);                
                 return Ok(StatusCode(StatusCodes.Status201Created));
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, "No vacant table found!"));
+                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message));
             }
             catch (MemberAccessException)
             {
@@ -51,7 +50,6 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status401Unauthorized));
             }
         }
-        [Authorize(Roles = "Customer")]
         [HttpPut("update")]
         public async Task<IActionResult> ModifiedReservationAsync(CustomerModifiedReservationModel modifiedReservation)
         {
@@ -78,7 +76,6 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status401Unauthorized));
             }
         }
-        [Authorize(Roles = "Customer")]
         [HttpPut("cancel")]
         public async Task<IActionResult> CancelReservationAsync(int reservationId)
         {
@@ -105,7 +102,6 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status401Unauthorized));
             }
         }
-        [Authorize(Roles = "Customer")]
         [HttpGet("current-pending")]
         public async Task<IActionResult> GetCurrentPendingReservationAsync()
         {
@@ -124,7 +120,6 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status401Unauthorized));
             }
         }
-        [Authorize(Roles = "Customer")]
         [HttpGet("history")]
         public async Task<IActionResult> GetHistoryReservationsAsync()
         {

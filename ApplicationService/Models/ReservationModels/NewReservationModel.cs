@@ -30,7 +30,7 @@ namespace ApplicationService.Models.ReservationModels
             {                
                 GuestAmount = Seat,
                 Note = Note,
-                ReservedTime = new DateTimeOffset(DesiredDate.ToDateTime(DesiredTime), TimeSpan.Zero),
+                ReservedTime = DesiredDate.ToDateTime(DesiredTime),
                 User = new User
                 {
                     Email = Email

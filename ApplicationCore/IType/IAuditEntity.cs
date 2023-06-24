@@ -8,8 +8,8 @@ namespace ApplicationCore.IType
 {
     public interface IAuditEntity
     {
-        DateTimeOffset Created { get; set; }
-        DateTimeOffset Modified { get; set; }
+        DateTime Created { get; set; }
+        DateTime Modified { get; set; }
 
     }
 }

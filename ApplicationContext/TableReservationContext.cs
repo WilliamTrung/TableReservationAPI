@@ -1,4 +1,5 @@
 ﻿using ApplicationContext.EFConfiguration;
+using ApplicationCore;
 using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -37,6 +38,7 @@ namespace ApplicationContext
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyUtcDateTimeConverter();
             modelBuilder.Entity<ReviewRating>().HasKey(c => new { c.ReviewId, c.RateId});
             modelBuilder.Entity<ReviewRating>().HasOne(c => c.Review).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.ReviewId);
             modelBuilder.Entity<ReviewRating>().HasOne(c => c.Rate).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.RateId);
