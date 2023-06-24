@@ -78,7 +78,7 @@ namespace ApplicationService.Services.Implementation
                 table.Type.Private == desired.Private &&
                 table.Type.Seat >= desired.Seat &&
                 Math.Abs(table.Type.Seat - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT
-                , orderBy: null, includeProperties: "Status,Type");
+                , orderBy: null, includeProperties: "Type");
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var task_reservations_inday = _unitOfWork.ReservationRepository.Get(filter: r => 
                 r.ReservedTime.Date.Equals(desired.DesiredDate) &&
@@ -86,7 +86,7 @@ namespace ApplicationService.Services.Implementation
                 r.GuestAmount >= desired.Seat &&
                 Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT && 
                 r.Status != IEnum.ReservationStatus.Cancel,
-                orderBy: null, includeProperties: "Status"
+                orderBy: null, includeProperties: null
                 );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             await Task.WhenAll(task_reservations_inday,task_desired_table_inday);
