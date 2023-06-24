@@ -25,8 +25,7 @@ namespace TableReservationAPI.Controllers
         public IActionResult GetVacantsAmount(DesiredReservationModel desired) 
         {
             var vacants = _bookTableService.GetVacantTables(desired).Result;
-            var returned_model = new NewReservationModel();
-            return Ok(new { vacants, returned_model });             
+            return Ok(vacants);             
         }
         [Authorize(Roles = "Customer")]
         [HttpPost]

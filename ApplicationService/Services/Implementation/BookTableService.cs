@@ -82,7 +82,7 @@ namespace ApplicationService.Services.Implementation
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var task_reservations_inday = _unitOfWork.ReservationRepository.Get(filter: r => 
                 r.ReservedTime.Date.Equals(desired.DesiredDate) &&
-                (DateTimeOffset.UtcNow.AddHours(2).AddMinutes(50).CompareTo(r.ReservedTime) >= 0) &&
+                (DateTimeOffset.UtcNow.AddHours(2).AddMinutes(50).DateTime <= r.ReservedTime) &&
                 r.GuestAmount >= desired.Seat &&
                 Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT && 
                 r.Status != IEnum.ReservationStatus.Cancel,

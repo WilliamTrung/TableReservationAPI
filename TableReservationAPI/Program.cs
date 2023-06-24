@@ -1,4 +1,5 @@
 using ApplicationContext;
+using ApplicationService.CustomJsonConverter;
 using ApplicationService.Mapper;
 using ApplicationService.Models;
 using ApplicationService.Models.JwtModels;
@@ -20,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using TableReservationAPI.CustomMiddleware;
 using static System.Net.WebRequestMethods;
@@ -30,6 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddControllers().AddOData(options => options
         .Select()
         .Filter()
@@ -40,8 +43,14 @@ builder.Services.AddControllers().AddOData(options => options
         )
     .AddJsonOptions
                (
-                   x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
-               );
+                   x =>
+                   {
+                       x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                       x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                       x.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
+                       x.JsonSerializerOptions.Converters.Add(new DateOnlyConverter());
+                   }  
+               ) ;
 
 var oauthGGConfig = builder.Configuration.GetRequiredSection("OAuthWebClient");
 builder.Services.Configure<OAuthConfiguration>(oauthGGConfig);
