@@ -16,7 +16,7 @@ namespace ApplicationService.Services.Implementation
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccountService _accountService;
         private readonly IQueueService _queueService;
-        public ReceptionService(IUnitOfWork unitOfWork, IAccountService accountService, IQueueService queueService) : base(unitOfWork)
+        public ReceptionService(IUnitOfWork unitOfWork, IAccountService accountService, IQueueService queueService) : base(unitOfWork, queueService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
@@ -89,9 +89,7 @@ namespace ApplicationService.Services.Implementation
             }
             reservation.Status = IEnum.ReservationStatus.Active;
             await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
-            _unitOfWork.Commit();
-
-            await _queueService.ScheduleReservationCheckin(reservation.Id, reservation.Modified.DateTime, reservation.ReservedTime.DateTime.AddMinutes(30));
+            _unitOfWork.Commit();            
         }
         /// <summary>
         /// Check out an arrived customer
