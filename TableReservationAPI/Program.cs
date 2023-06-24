@@ -4,6 +4,8 @@ using ApplicationService.Models;
 using ApplicationService.Models.JwtModels;
 using ApplicationService.Services;
 using ApplicationService.Services.Implementation;
+using ApplicationService.Tasks;
+using ApplicationService.Tasks.Implementation;
 using ApplicationService.UnitOfWork;
 using ApplicationService.UnitOfWork.Implementation;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -108,24 +110,27 @@ builder.Services.AddTransient<ITableManagementService, TableManagement>();
 builder.Services.AddTransient<IBookTableService, BookTableService>();
 builder.Services.AddTransient<IReceptionService, ReceptionService>();
 builder.Services.AddTransient<IGoogleService, GoogleService>();
-builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IQueueService, QueueService>();
+builder.Services.AddTransient<ITasks, Tasks>();
 
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
-string current_version = "v1.1.0";
+string current_version = "v1.2.0";
 string br = "<br/>";
+string v_110 = br + br + "v1.1.0" + " - Implement profile management";
+string v_120 = br + br + "v1.2.0" + " - Implement auto trigger event on checkin late and checkout late";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(current_version, new OpenApiInfo
     {
-        Title = "Table Reservation API v1.1.0",
-        Version = "v1.1.0",
+        Title = "Table Reservation API " + current_version,
+        Version = current_version,
         Description = guide_navToken + br + guide_toPostman + br + guide_roleAlert +
-            br + br + "v1.1.0" + " - Implement profile management"
-    });
-    // ...
+            v_110 + v_120
+    });    
 });
 
 var app = builder.Build();

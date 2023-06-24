@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Services
 {
-    public interface ILoginService
+    public interface IAccountService
     {
         /// <summary>
         /// Get AuthorizedModel from authorization token
