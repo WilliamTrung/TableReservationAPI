@@ -17,9 +17,11 @@ namespace ApplicationService.Services.Implementation
     public class BookTableService : IBookTableService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public BookTableService(IUnitOfWork unitOfWork)
+        private readonly IQueueService _queueService;
+        public BookTableService(IUnitOfWork unitOfWork, IQueueService queueService)
         {
             _unitOfWork = unitOfWork;                        
+            _queueService = queueService;
         }
         /// <summary>
         /// Cancel reservation before DEADLINE_HOURS
@@ -140,11 +142,21 @@ namespace ApplicationService.Services.Implementation
                     //update
                     found.GuestAmount = validateModel.Seat;
                     found.Note = validateModel.Note;
-                    found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
+                    bool modified_reservedTime = false; 
+                    if(found.ReservedTime != validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime))
+                    {
+                        modified_reservedTime = true;
+                        found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
+                    }
                     found.Private = validateModel.Private;
                     found.TableId = null;
                     await _unitOfWork.ReservationRepository.Update(found, found.Id);
                     _unitOfWork.Commit();
+
+                    if (modified_reservedTime)
+                    {
+                        await _queueService.ScheduleReservationCheckin(found.Id, found.Modified.DateTime, found.ReservedTime.DateTime.AddMinutes(30));
+                    }
                 } else
                 {
                     //throw
@@ -208,6 +220,8 @@ namespace ApplicationService.Services.Implementation
                     newReservation.UserId = user.Id;
                     await _unitOfWork.ReservationRepository.Create(newReservation);
                     _unitOfWork.Commit();
+
+                    await _queueService.ScheduleReservationCheckin(newReservation.Id, newReservation.Modified.DateTime, newReservation.ReservedTime.DateTime.AddMinutes(30));
                 } else
                 {
                     throw new MemberAccessException("Unauthorized");

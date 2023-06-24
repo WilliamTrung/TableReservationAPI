@@ -14,9 +14,13 @@ namespace ApplicationService.Services.Implementation
     public class ReceptionService : BookTableService, IReceptionService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ReceptionService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        private readonly IAccountService _accountService;
+        private readonly IQueueService _queueService;
+        public ReceptionService(IUnitOfWork unitOfWork, IAccountService accountService, IQueueService queueService) : base(unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _accountService = accountService;
+            _queueService = queueService;
         }
         /// <summary>
         /// Assign table to reservation
@@ -53,6 +57,76 @@ namespace ApplicationService.Services.Implementation
             _unitOfWork.ReservationRepository.Update(_reservation, _reservation.Id);
             _unitOfWork.Commit();
             return Task.CompletedTask;
+        }
+        /// <summary>
+        /// Check in an arrived customer
+        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw ArgumentNullException: No pending reservation for this customer</para>
+        /// <para>Throw InvalidOperationException: Not a valid time to check in</para>
+        /// </summary>
+        /// <param name="customerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task CheckinCustomer(string customerEmail)
+        {
+            var customer = await _accountService.ValidateLoginAsync(customerEmail);
+            if(customer == null)
+            {
+                throw new KeyNotFoundException(customerEmail);   
+            }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == customer.Email && r.Status == IEnum.ReservationStatus.Pending).Result.FirstOrDefault();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            if(reservation == null)
+            {
+                throw new ArgumentNullException("No pending reservation!");
+            }
+            if(!(DateTimeOffset.UtcNow >= reservation.ReservedTime && DateTimeOffset.UtcNow <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
+            {
+                throw new InvalidOperationException("Must only be checked in within " + reservation.ReservedTime + " - " + reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY));
+            }
+            reservation.Status = IEnum.ReservationStatus.Active;
+            await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
+            _unitOfWork.Commit();
+
+            await _queueService.ScheduleReservationCheckin(reservation.Id, reservation.Modified.DateTime, reservation.ReservedTime.DateTime.AddMinutes(30));
+        }
+        /// <summary>
+        /// Check out an arrived customer
+        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw ArgumentNullException: No active reservation for this customer</para>
+        /// <para>Throw InvalidOperationException: Not a valid time to check out</para>
+        /// </summary>
+        /// <param name="customerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task CheckoutCustomer(string customerEmail)
+        {
+            var customer = await _accountService.ValidateLoginAsync(customerEmail);
+            if (customer == null)
+            {
+                throw new KeyNotFoundException(customerEmail);
+            }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == customer.Email && r.Status == IEnum.ReservationStatus.Active).Result.FirstOrDefault();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            if (reservation == null)
+            {
+                throw new ArgumentNullException("No active reservation!");
+            }
+            if (!(DateTimeOffset.UtcNow <= reservation.Modified.AddMinutes(GlobalValidation.CHECKOUT_MAX)))
+            {
+                throw new InvalidOperationException("Must only be checked out within " + GlobalValidation.CHECKOUT_MAX + " minutes after check-in!");
+            }
+            reservation.Status = IEnum.ReservationStatus.Complete;
+            await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
+            _unitOfWork.Commit();
+
+            await _queueService.ScheduleReservationCheckout(reservation.Id, reservation.Modified.DateTime, reservation.Modified.DateTime.AddMinutes(150));
         }
 
         public async Task<IEnumerable<ReservationModel>> GetPendingReservations()

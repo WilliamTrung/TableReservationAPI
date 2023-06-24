@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using TableReservationAPI.CustomMiddleware;
 
 namespace TableReservationAPI.Controllers
 {
     [Route("api/booking-reservation")]
-    [Authorize(Roles = "Customer")]
+    [GoogleAuthorized(roles: "Customer")]
     
     [ApiController]
     public class BookReservationController : ODataController
     {
         private readonly IBookTableService _bookTableService;
-        private readonly ILoginService _loginService;
-        public BookReservationController(IBookTableService bookTableService, ILoginService loginService)
+        private readonly IAccountService _loginService;
+        public BookReservationController(IBookTableService bookTableService, IAccountService loginService)
         {
             _loginService = loginService;
             _bookTableService = bookTableService;

@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Services.Implementation
 {
-    public class LoginService : ILoginService
+    public class AccountService : IAccountService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGoogleService _googleService;
         private readonly Domain _domain;
-        public LoginService(IUnitOfWork unitOfWork, IGoogleService googleService, IOptions<Domain> domain)
+        public AccountService(IUnitOfWork unitOfWork, IGoogleService googleService, IOptions<Domain> domain)
         {
             _unitOfWork = unitOfWork;
             _googleService = googleService;

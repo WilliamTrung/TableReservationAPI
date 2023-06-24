@@ -25,5 +25,29 @@ namespace ApplicationService.Services
         Task AssignTable(int tableId, ReservationModel reservation);
         Task<IEnumerable<ReservationModel>> GetPendingReservations();
         Task<IEnumerable<TableModel>> GetVacantTables(ReservationModel reservation);
+        /// <summary>
+        /// Check in an arrived customer
+        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw ArgumentNullException: No pending reservation for this customer</para>
+        /// <para>Throw InvalidOperationException: Not a valid time to check in</para>
+        /// </summary>
+        /// <param name="customerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        Task CheckinCustomer(string customerEmail);
+        /// <summary>
+        /// Check out an arrived customer
+        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw ArgumentNullException: No active reservation for this customer</para>
+        /// <para>Throw InvalidOperationException: Not a valid time to check out</para>
+        /// </summary>
+        /// <param name="customerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        Task CheckoutCustomer(string customerEmail);
     }
 }

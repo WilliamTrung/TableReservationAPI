@@ -17,7 +17,7 @@ namespace TableReservationAPI.CustomMiddleware
         private bool isAuthorized = true;
         private bool _requiredPhone;
         private List<EnumModel.Role> _roles = new List<EnumModel.Role>();
-        private ILoginService _loginService = null!;
+        private IAccountService _loginService = null!;
         public GoogleAuthorized(string roles, bool requiredPhone = false)
         {
             var _roles_split = roles.Split(',');
@@ -31,7 +31,7 @@ namespace TableReservationAPI.CustomMiddleware
         private void SetConfiguration(ActionExecutingContext context)
         {
             var serviceProvider = context.HttpContext.RequestServices;
-            _loginService = (ILoginService)serviceProvider.GetRequiredService(typeof(ILoginService));
+            _loginService = (IAccountService)serviceProvider.GetRequiredService(typeof(IAccountService));
         }
         public override void OnActionExecuting(ActionExecutingContext context)
         {

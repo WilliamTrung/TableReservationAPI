@@ -5,20 +5,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using TableReservationAPI.CustomMiddleware;
 
 namespace TableReservationAPI.Controllers
 {
-    [Authorize(Roles = "Reception,Administrator")]
-    [Route("api/assign-table")]
+    [GoogleAuthorized(roles: "Reception,Administrator")]
+    [Route("api/reception")]
     [ApiController]
-    public class AssignTableController : ODataController
+    public class ReceptionController : ODataController
     {
         private readonly IReceptionService _receptionService;
-        public AssignTableController(IReceptionService receptionService)
+        public ReceptionController(IReceptionService receptionService)
         {
             _receptionService = receptionService;
         }
-        [HttpGet]
+        [HttpGet("pending-reservation")]
         [EnableQuery]
         public IActionResult GetPendingReservations() { 
             var result = _receptionService.GetPendingReservations().Result;
@@ -30,7 +31,8 @@ namespace TableReservationAPI.Controllers
             var result = await _receptionService.GetVacantTables(reservation);
             return Ok(result);
         }
-        [HttpPut]
+
+        [HttpPut("assign-table")]
         public async Task<IActionResult> AssignTableAsync(int tableId, ReservationModel reservation)
         {
             try

@@ -13,8 +13,8 @@ namespace TableReservationAPI.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ILoginService _loginService;
-        public ProfileController(IUserService userService, ILoginService loginService)
+        private readonly IAccountService _loginService;
+        public ProfileController(IUserService userService, IAccountService loginService)
         {
             _userService = userService;
             _loginService = loginService;
