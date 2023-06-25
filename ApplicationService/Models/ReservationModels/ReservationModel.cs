@@ -24,7 +24,7 @@ namespace ApplicationService.Models.ReservationModels
         // for reception only
         public int? AssignedTableId { get; set; }
         //system decide
-        public IEnum.ReservationStatus Status { get; set; } 
+        public EnumModel.ReservationStatus Status { get; set; } 
 
 
         public static ReservationModel FromReservation(Reservation reservation)
@@ -41,7 +41,7 @@ namespace ApplicationService.Models.ReservationModels
                 ModifiedDate = reservation.Modified,
                 Note = reservation.Note,
                 AssignedTableId = reservation.TableId,
-                Status = reservation.Status
+                Status = (EnumModel.ReservationStatus)Enum.Parse(typeof(EnumModel.ReservationStatus), reservation.Status.ToString())
             };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

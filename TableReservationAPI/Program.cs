@@ -1,5 +1,6 @@
 using ApplicationContext;
 using ApplicationService.CustomJsonConverter;
+using ApplicationService.HostedServices;
 using ApplicationService.Mapper;
 using ApplicationService.Models;
 using ApplicationService.Models.JwtModels;
@@ -24,6 +25,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TableReservationAPI.CustomMiddleware;
+using TableReservationAPI.Startup;
 using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +51,7 @@ builder.Services.AddControllers().AddOData(options => options
                        x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                        x.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
                        x.JsonSerializerOptions.Converters.Add(new DateOnlyConverter());
+                       x.JsonSerializerOptions.Converters.Add(new StringEnumConverter<EnumModel.ReservationStatus>());
                    }  
                ) ;
 
@@ -123,6 +126,9 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITasks, Tasks>();
 
+builder.Services.AddHostedService<CheckinLateDetectionService>();
+
+
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
@@ -159,4 +165,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseCors("CorsPolicy");
+
+//AddHostedService.AddLateDetectionService(app);
+
 app.Run();
+//app.Run();

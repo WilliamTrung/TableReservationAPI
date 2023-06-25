@@ -5,55 +5,71 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Validator;
 
 namespace ApplicationService.Tasks.Implementation
 {
     public class Tasks : ITasks
     {
         private readonly IUnitOfWork _unitOfWork;
+        private bool disposedValue;
+
         public Tasks(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;   
         }
-        public Task LateCheckInReservation(int reservationId, DateTime current_modified)
-        {
-            Console.WriteLine("Task latecheckinreservation for id: "+ reservationId +" starts at: "+ DateTime.Now);
-            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId).Result.FirstOrDefault();
-            if(reservation == null)
-            {
-                return Task.FromException(new KeyNotFoundException());
-            }
-            if(reservation.Status == IEnum.ReservationStatus.Pending && reservation.Modified == current_modified)
+        public async Task LateCheckInReservation()
+        {            
+            var time_compare = DateTime.Now.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY * -1);
+            Console.WriteLine("Start latecheckinreservation: " + DateTime.Now);
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.ReservedTime <= time_compare && r.Status == IEnum.ReservationStatus.Pending);
+            foreach (var reservation in reservations)
             {
                 reservation.Status = IEnum.ReservationStatus.Cancel;
-                _unitOfWork.ReservationRepository.Update(reservation);
-                _unitOfWork.Commit();
-                return Task.CompletedTask;
-            } else
+                //await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
+            }
+            if (reservations.Any())
             {
-                return Task.FromException(new InvalidOperationException());
+                _unitOfWork.Commit();
+            }            
+        }
+
+        public async Task LateCheckOutReservation()
+        {
+            Console.WriteLine("Start latecheckoutreservation: " + DateTime.Now);
+            var time_compare = DateTime.Now.AddMinutes(GlobalValidation.CHECKOUT_MAX * -1);
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.ReservedTime <= time_compare && r.Status == IEnum.ReservationStatus.Active);
+            foreach (var reservation in reservations)
+            {
+                reservation.Status = IEnum.ReservationStatus.Complete;
+                await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);                
+            }
+            if (reservations.Any())
+            {
+                _unitOfWork.Commit();
             }
         }
 
-        public Task LateCheckOutReservation(int reservationId, DateTime current_modified)
+        protected virtual void Dispose(bool disposing)
         {
-            Console.WriteLine("Task latecheckoutreservation for id: " + reservationId + " starts at: " + DateTime.Now);
-            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId).Result.FirstOrDefault();
-            if (reservation == null)
+            if (!disposedValue)
             {
-                return Task.FromException(new KeyNotFoundException());
+                if (disposing)
+                {
+                    _unitOfWork.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
             }
-            if (reservation.Status == IEnum.ReservationStatus.Active && reservation.Modified == current_modified)
-            {
-                reservation.Status = IEnum.ReservationStatus.Complete;
-                _unitOfWork.ReservationRepository.Update(reservation);
-                _unitOfWork.Commit();
-                return Task.CompletedTask;
-            }
-            else
-            {
-                return Task.FromException(new InvalidOperationException());
-            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

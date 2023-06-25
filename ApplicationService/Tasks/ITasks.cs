@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Tasks
 {
-    public interface ITasks
+    public interface ITasks : IDisposable
     {
-        Task LateCheckInReservation(int reservationId, DateTime current_modified);
-        Task LateCheckOutReservation(int reservationId, DateTime current_modified);
+        Task LateCheckInReservation();
+        Task LateCheckOutReservation();
     }
 }

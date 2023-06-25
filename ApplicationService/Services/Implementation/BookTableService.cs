@@ -268,7 +268,7 @@ namespace ApplicationService.Services.Implementation
         public async Task<IEnumerable<ReservationModel>> ViewHistoryReservations(AuthorizedModel requester)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status != IEnum.ReservationStatus.Pending && r.ReservedTime < DateTimeOffset.Now, orderBy: null, includeProperties: "User");
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && (r.Status == IEnum.ReservationStatus.Complete || r.Status == IEnum.ReservationStatus.Cancel), orderBy: null, includeProperties: "User");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             var result = new List<ReservationModel>();
             foreach (var item in reservations)

@@ -14,5 +14,13 @@ namespace ApplicationService.Models
             Customer,
             Reception
         }
+        public enum ReservationStatus
+        {
+            Pending,
+            Assigned,
+            Active,
+            Cancel,
+            Complete
+        }
     }
 }
