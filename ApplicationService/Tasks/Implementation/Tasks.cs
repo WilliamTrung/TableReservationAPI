@@ -17,6 +17,7 @@ namespace ApplicationService.Tasks.Implementation
         }
         public Task LateCheckInReservation(int reservationId, DateTime current_modified)
         {
+            Console.WriteLine("Task latecheckinreservation for id: "+ reservationId +" starts at: "+ DateTime.Now);
             var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId).Result.FirstOrDefault();
             if(reservation == null)
             {
@@ -36,6 +37,7 @@ namespace ApplicationService.Tasks.Implementation
 
         public Task LateCheckOutReservation(int reservationId, DateTime current_modified)
         {
+            Console.WriteLine("Task latecheckoutreservation for id: " + reservationId + " starts at: " + DateTime.Now);
             var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId).Result.FirstOrDefault();
             if (reservation == null)
             {

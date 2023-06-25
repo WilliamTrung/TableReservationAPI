@@ -121,7 +121,6 @@ builder.Services.AddTransient<IReceptionService, ReceptionService>();
 builder.Services.AddTransient<IGoogleService, GoogleService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IQueueService, QueueService>();
 builder.Services.AddTransient<ITasks, Tasks>();
 
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";

@@ -15,12 +15,10 @@ namespace ApplicationService.Services.Implementation
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccountService _accountService;
-        private readonly IQueueService _queueService;
-        public ReceptionService(IUnitOfWork unitOfWork, IAccountService accountService, IQueueService queueService) : base(unitOfWork, queueService)
+        public ReceptionService(IUnitOfWork unitOfWork, IAccountService accountService) : base(unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
-            _queueService = queueService;
         }
         /// <summary>
         /// Assign table to reservation
@@ -123,8 +121,6 @@ namespace ApplicationService.Services.Implementation
             reservation.Status = IEnum.ReservationStatus.Complete;
             await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
             _unitOfWork.Commit();
-
-            await _queueService.ScheduleReservationCheckout(reservation.Id, reservation.Modified, reservation.Modified.AddMinutes(150));
         }
 
         public async Task<IEnumerable<ReservationModel>> GetPendingReservations()

@@ -18,11 +18,9 @@ namespace ApplicationService.Services.Implementation
     public class BookTableService : IBookTableService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IQueueService _queueService;
-        public BookTableService(IUnitOfWork unitOfWork, IQueueService queueService)
+        public BookTableService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;                        
-            _queueService = queueService;
+            _unitOfWork = unitOfWork;            
         }
         /// <summary>
         /// Cancel reservation before DEADLINE_HOURS
@@ -144,21 +142,11 @@ namespace ApplicationService.Services.Implementation
                     //update
                     found.GuestAmount = validateModel.Seat;
                     found.Note = validateModel.Note;
-                    bool modified_reservedTime = false; 
-                    if(found.ReservedTime != validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime))
-                    {
-                        modified_reservedTime = true;
-                        found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
-                    }
+                    found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
                     found.Private = validateModel.Private;
                     found.TableId = null;
                     await _unitOfWork.ReservationRepository.Update(found, found.Id);
                     _unitOfWork.Commit();
-
-                    if (modified_reservedTime)
-                    {
-                        await _queueService.ScheduleReservationCheckin(found.Id, found.Modified, found.ReservedTime.AddMinutes(30));
-                    }
                 } else
                 {
                     //throw
@@ -178,8 +166,6 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="InvalidDataException"></exception>
         public Task<bool> ValidateReservation(NewReservationModel reservation, AuthorizedModel requester)
         {
-            var t = reservation.DesiredDate.ToDateTime(reservation.DesiredTime);
-            var r2 = DateTime.Now.AddHours(2).AddMinutes(30);
             if (reservation.DesiredDate.ToDateTime(reservation.DesiredTime) < DateTime.Now.AddHours(2).AddMinutes(30))
             {
                 throw new InvalidDataException();
@@ -238,8 +224,6 @@ namespace ApplicationService.Services.Implementation
                         newReservation.UserId = user.Id;
                         await _unitOfWork.ReservationRepository.Create(newReservation);
                         _unitOfWork.Commit();
-
-                        var t = _queueService.ScheduleReservationCheckin(newReservation.Id, newReservation.Modified, newReservation.ReservedTime.AddMinutes(30)).IsCompleted;
                     }
                     else
                     {
