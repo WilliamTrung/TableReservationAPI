@@ -28,5 +28,16 @@ namespace ApplicationService.Services.Implementation
             await _unitOfWork.UserRepository.Update(user, user.Id);
             _unitOfWork.Commit();
         }
+
+        public async Task<UpdateUserModel> GetProfile(string email)
+        {
+            var find = await _unitOfWork.UserRepository.Get(filter: u => u.Email == email);
+            var user = find.FirstOrDefault();
+            if (user == null)
+            {
+                throw new KeyNotFoundException();
+            }
+            return UpdateUserModel.FromUserEntity(user);
+        }
     }
 }

@@ -136,7 +136,7 @@ namespace ApplicationService.Services.Implementation
                 }
                 var validateModel = reservation.ToNewReservationModel();
                 validateModel.Email = found.User.Email;
-                if(await ValidateReservation(validateModel, requester))
+                if(await ValidateReservation(validateModel))
                 {
                     //is valid change
                     //update
@@ -164,7 +164,7 @@ namespace ApplicationService.Services.Implementation
         /// <param name="requester"></param>
         /// <returns></returns>
         /// <exception cref="InvalidDataException"></exception>
-        public Task<bool> ValidateReservation(NewReservationModel reservation, AuthorizedModel requester)
+        public Task<bool> ValidateReservation(NewReservationModel reservation)
         {
             if (reservation.DesiredDate.ToDateTime(reservation.DesiredTime) < DateTime.Now.AddHours(2).AddMinutes(30))
             {
@@ -210,11 +210,11 @@ namespace ApplicationService.Services.Implementation
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="MemberAccessException"></exception>
-        public async Task AddReservation(NewReservationModel reservation, AuthorizedModel requester)
+        public virtual async Task AddReservation(NewReservationModel reservation, AuthorizedModel requester)
         {      
             try
             {
-                if (await ValidateReservation(reservation, requester))
+                if (await ValidateReservation(reservation))
                 {
                     var task_user = await _unitOfWork.UserRepository.Get(filter: u => u.Email == requester.Email);
                     var user = task_user.FirstOrDefault();

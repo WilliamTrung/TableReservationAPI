@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Entities
 {
-    public class Review
+    public class Feedback
     {
-        public Review()
-        {
-            ReviewRatings = new HashSet<ReviewRating>();
-        }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Range(0, 5)]
         public double Rating { get; set; }  
         public string? Comment { get; set; }
-        public virtual ICollection<ReviewRating> ReviewRatings { get; set; }
+        [Required]
+        [ForeignKey(nameof(Reservation))]
+        public int ReservationId { get; set; }
+
+        public virtual Reservation Reservation { get; set; } = null!;
     }
 }

@@ -35,7 +35,7 @@ namespace ApplicationService.Services
         /// <param name="reservation"></param>
         /// <param name="requester"></param>
         /// <returns></returns>
-        Task<bool> ValidateReservation(NewReservationModel reservation, AuthorizedModel requester);
+        Task<bool> ValidateReservation(NewReservationModel reservation);
         /// <summary>
         /// Add reservation through ValidateReservation
         /// <para>Throw InvalidOperationException: No vacant at current time</para>

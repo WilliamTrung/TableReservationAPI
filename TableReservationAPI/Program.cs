@@ -52,6 +52,7 @@ builder.Services.AddControllers().AddOData(options => options
                        x.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
                        x.JsonSerializerOptions.Converters.Add(new DateOnlyConverter());
                        x.JsonSerializerOptions.Converters.Add(new StringEnumConverter<EnumModel.ReservationStatus>());
+                       x.JsonSerializerOptions.Converters.Add(new StringEnumConverter<EnumModel.Role>());
                    }  
                ) ;
 
@@ -132,10 +133,11 @@ builder.Services.AddHostedService<CheckinLateDetectionService>();
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
-string current_version = "v1.2.0";
+string current_version = "v1.2.1";
 string br = "<br/>";
 string v_110 = br + br + "v1.1.0" + " - Implement profile management";
 string v_120 = br + br + "v1.2.0" + " - Implement auto trigger event on checkin late and checkout late";
+string v_121 = br + br + "v1.2.1" + " - Fix return model - get profile information";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(current_version, new OpenApiInfo
@@ -143,7 +145,7 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Table Reservation API " + current_version,
         Version = current_version,
         Description = guide_navToken + br + guide_toPostman + br + guide_roleAlert +
-            v_110 + v_120
+            v_110 + v_120 + v_121
     });    
 });
 

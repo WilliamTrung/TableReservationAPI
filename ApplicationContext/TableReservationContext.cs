@@ -12,8 +12,7 @@ namespace ApplicationContext
 {
     public class TableReservationContext : DbContext
     {
-        public virtual DbSet<Rate> Rates { get; set; } = null!;
-        public virtual DbSet<Review> Reviews { get; set; } = null!;
+        public virtual DbSet<Feedback> Reviews { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<TableType> TableTypes { get; set; } = null!;
@@ -39,9 +38,6 @@ namespace ApplicationContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyUtcDateTimeConverter();
-            modelBuilder.Entity<ReviewRating>().HasKey(c => new { c.ReviewId, c.RateId});
-            modelBuilder.Entity<ReviewRating>().HasOne(c => c.Review).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.ReviewId);
-            modelBuilder.Entity<ReviewRating>().HasOne(c => c.Rate).WithMany(c => c.ReviewRatings).HasForeignKey(c => c.RateId);
             TableTypeConfiguration.Configuring(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }

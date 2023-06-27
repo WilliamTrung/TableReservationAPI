@@ -25,7 +25,8 @@ namespace TableReservationAPI.Controllers
             try
             {
                 var user = await _loginService.ValidateLoginAsync(authHeader);
-                return Ok(user);
+                var result = await _userService.GetProfile(user.Email);
+                return Ok(result);
             }
             catch (InvalidJwtException)
             {

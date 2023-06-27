@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey(nameof(User))]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         [ForeignKey(nameof(Table))]
         public int? TableId { get; set; }        
         public IEnum.ReservationStatus Status { get; set; } = IEnum.ReservationStatus.Pending;
@@ -33,7 +33,7 @@ namespace ApplicationCore.Entities
 
         public virtual User? User { get; set; }
         public virtual Table? Table { get; set; }
-        public virtual Review? Review { get; set; }
+        public virtual Feedback? Review { get; set; }
         
     }
 }

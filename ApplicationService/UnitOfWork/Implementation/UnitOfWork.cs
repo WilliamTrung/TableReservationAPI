@@ -15,10 +15,8 @@ namespace ApplicationService.UnitOfWork.Implementation
         private bool disposedValue;
         private readonly TableReservationContext _context;
 
-        private GenericRepository<Rate>? _rateRepos;
         private GenericRepository<Reservation>? _reservationRepos;
-        private GenericRepository<Review>? _reviewRepos;
-        private GenericRepository<ReviewRating>? _reviewRatingRepos;
+        private GenericRepository<Feedback>? _reviewRepos;
         private GenericRepository<Role>? _roleRepos;
         private GenericRepository<Table>?    _tableRepos;
         private GenericRepository<User>? _userRepos;
@@ -27,17 +25,6 @@ namespace ApplicationService.UnitOfWork.Implementation
         public UnitOfWork(TableReservationContext context)
         {
             _context = context;
-        }
-        public IGenericRepository<Rate> RateRepository
-        {
-            get
-            {
-                if(_rateRepos == null)
-                {
-                    _rateRepos = new GenericRepository<Rate>(_context);
-                }
-                return _rateRepos;
-            }
         }
 
         public IGenericRepository<Reservation> ReservationRepository
@@ -52,29 +39,18 @@ namespace ApplicationService.UnitOfWork.Implementation
             }
         }
 
-        public IGenericRepository<Review> ReviewRepository
+        public IGenericRepository<Feedback> ReviewRepository
         {
             get
             {
                 if(_reviewRepos == null)
                 {
-                    _reviewRepos = new GenericRepository<Review>(_context);
+                    _reviewRepos = new GenericRepository<Feedback>(_context);
                 }
                 return _reviewRepos;
             }
         }
 
-        public IGenericRepository<ReviewRating> ReviewRatingRepository
-        {
-            get
-            {
-                if(_reviewRatingRepos == null)
-                {
-                    _reviewRatingRepos = new GenericRepository<ReviewRating>(_context);
-                }
-                return _reviewRatingRepos;
-            }
-        }
 
         public IGenericRepository<Role> RoleRepository
         {

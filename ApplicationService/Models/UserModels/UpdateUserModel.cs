@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Enum;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,17 @@ namespace ApplicationService.Models.UserModels
     {
         [Required]
         public string Email { get; set; } = null!;
-        public IEnum.Role Role { get; set; }
+        public EnumModel.Role Role { get; set; }
         public string? Phone { get; set; }
+
+        public static UpdateUserModel FromUserEntity(User user)
+        {
+            return new UpdateUserModel
+            {
+                Email = user.Email,
+                Role = Enum.Parse<EnumModel.Role>(user.Role.ToString()),
+                Phone = user.Phone,
+            };
+        }
     }
 }

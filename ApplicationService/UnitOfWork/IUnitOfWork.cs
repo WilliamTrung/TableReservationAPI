@@ -10,10 +10,8 @@ namespace ApplicationService.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        IGenericRepository<Rate> RateRepository { get; }
         IGenericRepository<Reservation> ReservationRepository { get; }
-        IGenericRepository<Review> ReviewRepository { get; }
-        IGenericRepository<ReviewRating> ReviewRatingRepository { get; }
+        IGenericRepository<Feedback> ReviewRepository { get; }
         IGenericRepository<Role> RoleRepository { get; }
         IGenericRepository<Table> TableRepository { get; }
         IGenericRepository<TableType> TableTypeRepository { get; }
