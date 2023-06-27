@@ -3,17 +3,19 @@ using System;
 using ApplicationContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ApplicationCore.Migrations
+namespace ApplicationContext.Migrations
 {
     [DbContext(typeof(TableReservationContext))]
-    partial class TableReservationContextModelSnapshot : ModelSnapshot
+    [Migration("20230627081507_complete-feedback-table")]
+    partial class completefeedbacktable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace ApplicationCore.Migrations
 
                     b.HasIndex("ReservationId");
 
-                    b.ToTable("Feedback");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Reservation", b =>

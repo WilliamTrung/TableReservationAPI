@@ -8,13 +8,20 @@ using System.Threading.Tasks;
 
 namespace ApplicationCore.Entities
 {
+    [Table("Feedback")]
     public class Feedback
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Range(0, 5)]
-        public double Rating { get; set; }  
+        public int? UtilityRating { get; set; }
+        [Range(0, 5)]
+        public int? ServiceRating { get; set; }
+        [Range(0, 5)]
+        public int? FacilityRating { get; set; }
+        [Range(0, 5)]
+        public int? FoodRating { get; set; }
         public string? Comment { get; set; }
         [Required]
         [ForeignKey(nameof(Reservation))]
