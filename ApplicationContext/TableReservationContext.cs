@@ -37,8 +37,9 @@ namespace ApplicationContext
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyUtcDateTimeConverter();
+            modelBuilder.ApplyUtcDateTimeConverter();            
             TableTypeConfiguration.Configuring(modelBuilder);
+            FeedbackConfiguration.Configuring(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
     }

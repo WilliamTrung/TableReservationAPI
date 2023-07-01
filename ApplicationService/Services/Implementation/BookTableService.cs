@@ -118,7 +118,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         public async Task ModifiedReservation(CustomerModifiedReservationModel reservation, AuthorizedModel requester)
         {
-            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id, includeProperties: "User,Status");
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id, includeProperties: "User");
             var found = find.FirstOrDefault();
             if (found != null)
             {

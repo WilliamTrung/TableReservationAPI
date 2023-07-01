@@ -53,5 +53,6 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status406NotAcceptable, "Selected table is invalid for this reservation!"));
             }
         }
+
     }
 }

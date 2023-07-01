@@ -20,6 +20,8 @@ namespace ApplicationService.Services.Implementation
             _unitOfWork = unitOfWork;
             _accountService = accountService;
         }
+        
+
         /// <summary>
         /// Assign table to reservation
         /// <para>Throw KeyNotFoundException: No table or reservation with such id found</para>
@@ -89,6 +91,9 @@ namespace ApplicationService.Services.Implementation
             await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
             _unitOfWork.Commit();            
         }
+
+        
+
         /// <summary>
         /// Check out an arrived customer
         /// <para>Throw KeyNotFoundException: No user with such account</para>
@@ -122,6 +127,8 @@ namespace ApplicationService.Services.Implementation
             await _unitOfWork.ReservationRepository.Update(reservation, reservation.Id);
             _unitOfWork.Commit();
         }
+
+        
 
         public async Task<IEnumerable<ReservationModel>> GetPendingReservations()
         {

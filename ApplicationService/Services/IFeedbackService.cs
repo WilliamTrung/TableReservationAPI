@@ -1,4 +1,5 @@
 ﻿using ApplicationService.Models.FeedbackModels;
+using ApplicationService.Models.UserModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace ApplicationService.Services
     {
         Task SendFeedback(FeedbackModel feedback);
         Task GetFeedbacks();
+        Task GetFeedbackByReservation(int reservationId, AuthorizedModel requester);
     }
 }

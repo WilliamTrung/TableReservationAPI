@@ -108,24 +108,12 @@ builder.Services.Configure<OAuthConfiguration>(oauthGGConfig);
 //{
 //    throw new Exception("Cannot initialize jwt bearer");
 //}
-builder.Services.AddCors(option =>
-{
-    option.AddPolicy("CorsPolicy", builder =>
-    {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    });
-});
+
 builder.Services.Configure<Domain>(builder.Configuration.GetSection("Domain"));
 builder.Services.AddDbContext<TableReservationContext>(option => option.UseNpgsql(Global.ConnectionString));
 builder.Services.AddAutoMapper(typeof(Mapper));
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient<ITableManagementService, TableManagement>();
-builder.Services.AddTransient<IBookTableService, BookTableService>();
-builder.Services.AddTransient<IReceptionService, ReceptionService>();
-builder.Services.AddTransient<IGoogleService, GoogleService>();
-builder.Services.AddTransient<IAccountService, AccountService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<ITasks, Tasks>();
+AddServices.ConfiguringServices(builder);
+AddServices.ConfiguringCors(builder);
 
 builder.Services.AddHostedService<CheckinLateDetectionService>();
 
@@ -133,11 +121,12 @@ builder.Services.AddHostedService<CheckinLateDetectionService>();
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
-string current_version = "v1.2.1";
+string current_version = "v1.3.0";
 string br = "<br/>";
 string v_110 = br + br + "v1.1.0" + " - Implement profile management";
 string v_120 = br + br + "v1.2.0" + " - Implement auto trigger event on checkin late and checkout late";
 string v_121 = br + br + "v1.2.1" + " - Fix return model - get profile information";
+string v_130 = br + br + "v1.3.0" + " - Implement anonymous reservation booking for reception";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(current_version, new OpenApiInfo
@@ -145,7 +134,7 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Table Reservation API " + current_version,
         Version = current_version,
         Description = guide_navToken + br + guide_toPostman + br + guide_roleAlert +
-            v_110 + v_120 + v_121
+            v_110 + v_120 + v_121 + v_130
     });    
 });
 

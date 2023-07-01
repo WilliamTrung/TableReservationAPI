@@ -20,8 +20,6 @@ namespace ApplicationCore.Entities
         [ForeignKey(nameof(Table))]
         public int? TableId { get; set; }        
         public IEnum.ReservationStatus Status { get; set; } = IEnum.ReservationStatus.Pending;
-        [ForeignKey(nameof(Review))]
-        public int? ReviewId { get; set; }
         [Range(1, int.MaxValue)]
         public int GuestAmount { get; set; }  
         public DateTime Created { get; set; }
@@ -33,7 +31,6 @@ namespace ApplicationCore.Entities
 
         public virtual User? User { get; set; }
         public virtual Table? Table { get; set; }
-        public virtual Feedback? Review { get; set; }
         
     }
 }

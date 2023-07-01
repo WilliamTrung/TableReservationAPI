@@ -49,5 +49,6 @@ namespace ApplicationService.Services
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         Task CheckoutCustomer(string customerEmail);
+        
     }
 }

@@ -3,17 +3,19 @@ using System;
 using ApplicationContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ApplicationCore.Migrations
+namespace ApplicationContext.Migrations
 {
     [DbContext(typeof(TableReservationContext))]
-    partial class TableReservationContextModelSnapshot : ModelSnapshot
+    [Migration("20230627103604_remove-id-feedback-table")]
+    partial class removeidfeedbacktable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +26,6 @@ namespace ApplicationCore.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.Feedback", b =>
                 {
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
@@ -36,13 +35,16 @@ namespace ApplicationCore.Migrations
                     b.Property<int?>("FoodRating")
                         .HasColumnType("integer");
 
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("ServiceRating")
                         .HasColumnType("integer");
 
                     b.Property<int?>("UtilityRating")
                         .HasColumnType("integer");
 
-                    b.HasKey("ReservationId");
+                    b.HasIndex("ReservationId");
 
                     b.ToTable("Feedback");
                 });

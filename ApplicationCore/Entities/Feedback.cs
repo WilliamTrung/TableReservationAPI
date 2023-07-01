@@ -11,9 +11,6 @@ namespace ApplicationCore.Entities
     [Table("Feedback")]
     public class Feedback
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         [Range(0, 5)]
         public int? UtilityRating { get; set; }
         [Range(0, 5)]
