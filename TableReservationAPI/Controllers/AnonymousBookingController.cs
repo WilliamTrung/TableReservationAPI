@@ -2,14 +2,15 @@
 using ApplicationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using TableReservationAPI.CustomMiddleware;
 
 namespace TableReservationAPI.Controllers
 {
-    [Route("api/anonymouse-booking")]
-    [GoogleAuthorized("Reception")]
+    [Route("api/anonymous-booking")]
+    [GoogleAuthorized(roles: "Reception")]
     [ApiController]
-    public class AnonymousBookingController : ControllerBase
+    public class AnonymousBookingController : ODataController
     {
         private readonly IAnonymousBookingService _anonymousBookingService;        
         public AnonymousBookingController(IAnonymousBookingService anonymousBookingService)

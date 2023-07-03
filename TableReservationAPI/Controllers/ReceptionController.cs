@@ -53,6 +53,47 @@ namespace TableReservationAPI.Controllers
                 return Ok(StatusCode(StatusCodes.Status406NotAcceptable, "Selected table is invalid for this reservation!"));
             }
         }
-
+        [HttpPost("check-in")]
+        public async Task<IActionResult> CheckinReservation(int reservationId)
+        {
+            try
+            {
+                await _receptionService.CheckinCustomer(reservationId);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status409Conflict, ex.Message));
+            }
+            catch (ArgumentNullException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+            }
+        }
+        [HttpPost("check-out")]
+        public async Task<IActionResult> CheckoutReservation(int reservationId)
+        {
+            try
+            {
+                await _receptionService.CheckoutCustomer(reservationId);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status409Conflict, ex.Message));
+            }
+            catch (ArgumentNullException ex)
+            {
+                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+            }
+        }
     }
 }

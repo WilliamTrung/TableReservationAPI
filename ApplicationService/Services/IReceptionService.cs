@@ -27,7 +27,7 @@ namespace ApplicationService.Services
         Task<IEnumerable<TableModel>> GetVacantTables(ReservationModel reservation);
         /// <summary>
         /// Check in an arrived customer
-        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw KeyNotFoundException: Reservation not found!</para>
         /// <para>Throw ArgumentNullException: No pending reservation for this customer</para>
         /// <para>Throw InvalidOperationException: Not a valid time to check in</para>
         /// </summary>
@@ -36,10 +36,10 @@ namespace ApplicationService.Services
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        Task CheckinCustomer(string customerEmail);
+        Task CheckinCustomer(int reservationId);
         /// <summary>
         /// Check out an arrived customer
-        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw KeyNotFoundException: Reservation not found</para>
         /// <para>Throw ArgumentNullException: No active reservation for this customer</para>
         /// <para>Throw InvalidOperationException: Not a valid time to check out</para>
         /// </summary>
@@ -48,7 +48,7 @@ namespace ApplicationService.Services
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        Task CheckoutCustomer(string customerEmail);
+        Task CheckoutCustomer(int reservationId);
         
     }
 }

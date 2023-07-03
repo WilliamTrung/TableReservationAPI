@@ -60,7 +60,7 @@ namespace ApplicationService.Services.Implementation
         }
         /// <summary>
         /// Check in an arrived customer
-        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw KeyNotFoundException: Reservation not found!</para>
         /// <para>Throw ArgumentNullException: No pending reservation for this customer</para>
         /// <para>Throw InvalidOperationException: Not a valid time to check in</para>
         /// </summary>
@@ -69,17 +69,16 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task CheckinCustomer(string customerEmail)
+        public async Task CheckinCustomer(int reservationId)
         {
-            var customer = await _accountService.ValidateLoginAsync(customerEmail);
-            if(customer == null)
-            {
-                throw new KeyNotFoundException(customerEmail);   
-            }
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == customer.Email && r.Status == IEnum.ReservationStatus.Pending).Result.FirstOrDefault();
+            var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             if(reservation == null)
+            {
+                throw new KeyNotFoundException("Reservation not found!");                
+            }
+            if(reservation.Status != IEnum.ReservationStatus.Pending)
             {
                 throw new ArgumentNullException("No pending reservation!");
             }
@@ -96,7 +95,7 @@ namespace ApplicationService.Services.Implementation
 
         /// <summary>
         /// Check out an arrived customer
-        /// <para>Throw KeyNotFoundException: No user with such account</para>
+        /// <para>Throw KeyNotFoundException: Reservation not found</para>
         /// <para>Throw ArgumentNullException: No active reservation for this customer</para>
         /// <para>Throw InvalidOperationException: Not a valid time to check out</para>
         /// </summary>
@@ -105,17 +104,16 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task CheckoutCustomer(string customerEmail)
+        public async Task CheckoutCustomer(int reservationId)
         {
-            var customer = await _accountService.ValidateLoginAsync(customerEmail);
-            if (customer == null)
-            {
-                throw new KeyNotFoundException(customerEmail);
-            }
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == customer.Email && r.Status == IEnum.ReservationStatus.Active).Result.FirstOrDefault();
+            var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             if (reservation == null)
+            {
+                throw new KeyNotFoundException("Reservation not found!");
+            }
+            if (reservation.Status != IEnum.ReservationStatus.Active)
             {
                 throw new ArgumentNullException("No active reservation!");
             }

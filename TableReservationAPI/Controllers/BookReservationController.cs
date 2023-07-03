@@ -9,8 +9,7 @@ using TableReservationAPI.CustomMiddleware;
 namespace TableReservationAPI.Controllers
 {
     [Route("api/booking-reservation")]
-    [GoogleAuthorized(roles: "Customer")]
-    
+    [GoogleAuthorized(roles: "Customer")]    
     [ApiController]
     public class BookReservationController : ODataController
     {
