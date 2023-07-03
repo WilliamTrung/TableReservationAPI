@@ -69,7 +69,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                await _anonymousBookingService.CheckinAnonymousReservation(reservationId);
+                await _anonymousBookingService.CheckinCustomer(reservationId);
                 return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
             catch (KeyNotFoundException ex)
@@ -86,7 +86,7 @@ namespace TableReservationAPI.Controllers
         {
             try
             {
-                await _anonymousBookingService.CheckoutAnonymousReservation(reservationId);
+                await _anonymousBookingService.CheckoutCustomer(reservationId);
                 return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
             catch (KeyNotFoundException ex)
