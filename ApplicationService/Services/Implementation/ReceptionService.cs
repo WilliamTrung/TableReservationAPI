@@ -34,7 +34,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="InvalidDataException"></exception>
-        public Task AssignTable(int tableId, ReservationModel reservation)
+        Task IReceptionService.AssignTable(int tableId, ReservationModel reservation)
         {
             var task_table = _unitOfWork.TableRepository.Get(filter: t => t.Id == reservation.Id, includeProperties: "Type");
             var task_reservation = _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id);
@@ -69,7 +69,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task CheckinCustomer(int reservationId)
+        async Task IReceptionService.CheckinCustomer(int reservationId)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
@@ -104,7 +104,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task CheckoutCustomer(int reservationId)
+        async Task IReceptionService.CheckoutCustomer(int reservationId)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
@@ -128,7 +128,7 @@ namespace ApplicationService.Services.Implementation
 
         
 
-        public async Task<IEnumerable<ReservationModel>> GetPendingReservations()
+        async Task<IEnumerable<ReservationModel>> IReceptionService.GetPendingReservations()
         {
             var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Pending, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: null);
             var result = new List<ReservationModel>();
@@ -140,29 +140,28 @@ namespace ApplicationService.Services.Implementation
 
         }
 
-        public async Task<IEnumerable<TableModel>> GetVacantTables(ReservationModel reservation)
+        public async Task<IEnumerable<TableModel>> GetVacantTablesInformation(DesiredReservationModel desired)
         {
+            var task_desired_table_inday = (await _unitOfWork.TableRepository.Get(filter: table =>
+                            table.IsDeleted == false &&
+                            table.Status == IEnum.TableStatus.Available &&
+                            table.Type.Private == desired.Private &&
+                            table.Type.Seat >= desired.Seat &&
+                            Math.Abs(table.Type.Seat - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT
+                            , orderBy: null, includeProperties: "Type")).ToList();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var task_reservations_atTime = _unitOfWork.ReservationRepository.Get(filter: r =>
-                r.ReservedTime.Date.Equals(reservation.Date) &&
-                (DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS).CompareTo(r.ReservedTime) >= 0) &&
-                r.GuestAmount >= reservation.Seat &&
-                Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT &&
-                r.Status != IEnum.ReservationStatus.Cancel &&
-                r.TableId != null,
-                orderBy: null, includeProperties: "Status"
+            var current_time = DateTimeOffset.Now;
+            var task_reservations_inday = await _unitOfWork.ReservationRepository.Get(filter: r =>
+                r.ReservedTime.Date.Equals(desired.DesiredDate) &&
+                (current_time.AddHours(2).AddMinutes(50).DateTime <= r.ReservedTime) &&
+                r.GuestAmount >= desired.Seat &&
+                Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT &&
+                r.Status != IEnum.ReservationStatus.Cancel,
+                orderBy: null, includeProperties: null
                 );
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            var task_desired_table_inday = _unitOfWork.TableRepository.Get(filter: table =>
-                table.IsDeleted == false &&
-                table.Status == IEnum.TableStatus.Available &&
-                table.Type.Private == reservation.Private &&
-                table.Type.Seat >= reservation.Seat &&
-                Math.Abs(table.Type.Seat - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
-                , orderBy: null, includeProperties: "Status,Type");
-            await Task.WhenAll(task_reservations_atTime, task_desired_table_inday);
-            var reservations = task_reservations_atTime.Result;
-            var vacant_tables = task_desired_table_inday.Result.Where(t => !reservations.Any(r => r.TableId == t.Id));
+            var reservations = task_reservations_inday;
+            var vacant_tables = task_desired_table_inday.Where(t => !reservations.Any(r => r.TableId == t.Id));
             var result = new List<TableModel>();
             foreach (var item in vacant_tables)
             {

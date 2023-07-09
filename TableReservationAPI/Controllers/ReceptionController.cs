@@ -26,9 +26,9 @@ namespace TableReservationAPI.Controllers
             return Ok(result);
         }
         [HttpGet("get-vacants")]
-        public async Task<IActionResult> GetVacantTablesAsync(ReservationModel reservation)
+        public async Task<IActionResult> GetVacantTablesAsync(DesiredReservationModel desired)
         {
-            var result = await _receptionService.GetVacantTables(reservation);
+            var result = await _receptionService.GetVacantTablesInformation(desired);
             return Ok(result);
         }
 
