@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'TableReservationAPI'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C026452EB7DF43228B9BCE1A8FFFD2F7 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2B99A620B6D241C28325497DF60D7083 }}
           package: .
