@@ -32,7 +32,7 @@ namespace ApplicationService.Services.Implementation
         {
             bool checkStatus = Enum.IsDefined(typeof(IEnum.TableStatus), table.Status);
             
-            if(!checkStatus == false)
+            if(!checkStatus)
             {
                 throw new MissingMemberException("Selected status does not exist!");
             }
