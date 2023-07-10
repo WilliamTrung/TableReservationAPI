@@ -71,30 +71,30 @@ namespace ApplicationService.Services.Implementation
         /// <returns>The number of vacants in working hours</returns>
         public async Task<IEnumerable<VacantTables>> GetVacantTables(DesiredReservationModel desired)
         {
-            var task_desired_table_inday = _unitOfWork.TableRepository.Get(filter: table =>
+            var desired_table_inday = (await _unitOfWork.TableRepository.Get(filter: table =>
                 table.IsDeleted == false &&
                 table.Status == IEnum.TableStatus.Available &&
                 table.Type.Private == desired.Private &&
                 table.Type.Seat >= desired.Seat &&
                 Math.Abs(table.Type.Seat - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT
-                , orderBy: null, includeProperties: "Type");
+                , orderBy: null, includeProperties: "Type")).ToList();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var current_time = DateTimeOffset.Now;
-            var task_reservations_inday = _unitOfWork.ReservationRepository.Get(filter: r => 
-                r.ReservedTime.Date.Equals(desired.DesiredDate) &&
-                (current_time.AddHours(2).AddMinutes(50).DateTime <= r.ReservedTime) &&
+            var current_time = DateTime.Now;
+            var reservations_inday = (await _unitOfWork.ReservationRepository.Get(
+                filter: r =>
+                r.ReservedTime.Date == desired.DesiredDate.ToDateTime(TimeOnly.MinValue) &&
+                //(current_time.AddHours(2).AddMinutes(50) <= r.ReservedTime) &&
                 r.GuestAmount >= desired.Seat &&
-                Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT && 
-                r.Status != IEnum.ReservationStatus.Cancel,
+                Math.Abs(r.GuestAmount - desired.Seat) <= GlobalValidation.BOUNDARY_SEAT &&
+                r.Status != IEnum.ReservationStatus.Cancel &&
+                r.Private == desired.Private,
                 orderBy: null, includeProperties: null
-                );
+                )).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            await Task.WhenAll(task_reservations_inday,task_desired_table_inday);
-            var count_desired_table_inday = task_desired_table_inday.Result.Count();
-            var reservations_inday = task_reservations_inday.Result;
+            var count_desired_table_inday = desired_table_inday.Count();
 
             var list = new List<VacantTables>();
-            for (int i = GlobalValidation.START_TIME; i <= GlobalValidation.END_TIME; i++)
+            for (double i = GlobalValidation.START_TIME; i <= GlobalValidation.END_TIME; i+=0.5)
             {
                 int count_reservations_atTime = reservations_inday.Count(r => r.ReservedTime.TimeOfDay >= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS * -1) && r.ReservedTime.TimeOfDay <= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS));
                 int count_vacant = count_desired_table_inday - count_reservations_atTime;
@@ -176,18 +176,19 @@ namespace ApplicationService.Services.Implementation
             //        r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan()) &&
             //        Math.Abs(reservation.Seat - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
             //        );
-            var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>          
-                    r.Status == IEnum.ReservationStatus.Pending &&
-                    Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
-                    );
-            Task.WaitAll(task_reservations, task_getVacantTablesOnDate);
+            //var task_reservations = _unitOfWork.ReservationRepository.Get(filter: r =>          
+            //        r.Status == IEnum.ReservationStatus.Pending &&
+            //        Math.Abs(r.GuestAmount - reservation.Seat) <= GlobalValidation.BOUNDARY_SEAT
+            //        );
+            //Task.WaitAll(task_reservations, task_getVacantTablesOnDate);
+            Task.WaitAll(task_getVacantTablesOnDate);
             //int checkVacantOnDate = getVacantTablesOnDate.Where(v => v.Time == reservation.DesiredTime).Count();
             var getVacantTableOnTime = task_getVacantTablesOnDate.Result.First(t => t.Time == reservation.DesiredTime);
-            var reservations = task_reservations.Result.ToList();
-            reservations = reservations.Where(r => r.ReservedTime.Day == reservation.DesiredDate.Day && (r.ReservedTime.Add(TimeSpan.FromHours(GlobalValidation.BOUNDARY_HOURS)).TimeOfDay == reservation.DesiredTime.ToTimeSpan() ||
-                    r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan())).ToList();
-            var amountReservations = reservations.Count();
-            var count_available = getVacantTableOnTime.Amount - amountReservations;
+            //var reservations = task_reservations.Result.ToList();
+            //reservations = reservations.Where(r => r.ReservedTime.Day == reservation.DesiredDate.Day && (r.ReservedTime.Add(TimeSpan.FromHours(GlobalValidation.BOUNDARY_HOURS)).TimeOfDay == reservation.DesiredTime.ToTimeSpan() ||
+            //        r.ReservedTime.TimeOfDay == reservation.DesiredTime.ToTimeSpan())).ToList();
+            //var amountReservations = reservations.Count();
+            var count_available = getVacantTableOnTime.Amount;//- amountReservations;
             if(count_available > 0)
             {
                 //is valid
@@ -248,8 +249,9 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         public async Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester)
         {
+            Console.WriteLine(DateTime.UtcNow);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTimeOffset.Now, orderBy: null, includeProperties:"User,Table");
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTime.UtcNow, orderBy: null, includeProperties:"User,Table");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             var reservation = find.FirstOrDefault();

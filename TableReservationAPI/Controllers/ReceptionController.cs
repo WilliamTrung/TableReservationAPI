@@ -26,10 +26,21 @@ namespace TableReservationAPI.Controllers
             return Ok(result);
         }
         [HttpGet("get-vacants")]
-        public async Task<IActionResult> GetVacantTablesAsync(DesiredReservationModel desired)
+        public async Task<IActionResult> GetVacantTablesAsync(int reservationId)
         {
-            var result = await _receptionService.GetVacantTablesInformation(desired);
-            return Ok(result);
+            try
+            {
+                var result = await _receptionService.GetVacantTablesInformation(reservationId);
+                return Ok(result);
+            } catch (KeyNotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            } catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            
+            
         }
 
         [HttpPut("assign-table")]
@@ -48,9 +59,9 @@ namespace TableReservationAPI.Controllers
             {
                 return Ok(StatusCode(StatusCodes.Status409Conflict, "This reservation has been modified!"));
             }
-            catch (InvalidDataException)
+            catch (InvalidDataException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, "Selected table is invalid for this reservation!"));
+                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
             }
         }
         [HttpPost("check-in")]

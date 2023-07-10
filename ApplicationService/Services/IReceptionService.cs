@@ -24,7 +24,14 @@ namespace ApplicationService.Services
         /// <exception cref="InvalidDataException"></exception>
         Task AssignTable(int tableId, ReservationModel reservation);
         Task<IEnumerable<ReservationModel>> GetPendingReservations();
-        Task<IEnumerable<TableModel>> GetVacantTablesInformation(DesiredReservationModel desired);
+        /// <summary>
+        /// Get vacant table(s) based on provided reservationId
+        /// <para>Throw KeyNotFoundException: No reservation found!</para>
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        Task<IEnumerable<TableModel>> GetVacantTablesInformation(int reservationId);
         /// <summary>
         /// Check in an arrived customer
         /// <para>Throw KeyNotFoundException: Reservation not found!</para>

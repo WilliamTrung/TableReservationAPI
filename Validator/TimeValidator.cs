@@ -16,7 +16,7 @@ namespace Validator
         {
             if (value is TimeOnly time)
             {
-                if (IsOclock(time))
+                if (IsOclock(time) || IsHalf(time))
                 {
                     // Time is "o'clock"
                     return true;
@@ -36,7 +36,10 @@ namespace Validator
         {
             return time.Minute == 0 && time.Second == 0;
         }
-
+        private bool IsHalf(TimeOnly time)
+        {
+            return time.Minute == 30 && time.Second == 0;
+        }
         private bool IsBetween(TimeOnly time, TimeSpan startTime, TimeSpan endTime)
         {
             TimeSpan currentTime = time.ToTimeSpan();

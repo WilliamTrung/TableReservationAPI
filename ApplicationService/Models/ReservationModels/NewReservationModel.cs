@@ -31,10 +31,6 @@ namespace ApplicationService.Models.ReservationModels
                 GuestAmount = Seat,
                 Note = Note,
                 ReservedTime = DesiredDate.ToDateTime(DesiredTime),
-                User = new User
-                {
-                    Email = Email
-                },
                 Private = Private
             };
         }    

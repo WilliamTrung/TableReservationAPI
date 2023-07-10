@@ -114,9 +114,9 @@ namespace TableReservationAPI.Controllers
             {
                 return Ok(StatusCode(StatusCodes.Status404NotFound, "No reservation found!"));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Ok(StatusCode(StatusCodes.Status401Unauthorized));
+                return Ok(StatusCode(StatusCodes.Status500InternalServerError, ex.Message));
             }
         }
         [HttpGet("history")]
