@@ -37,6 +37,42 @@ namespace ApplicationContext.EFConfiguration
                     Id = 4,
                     Private = false,
                     Seat = 4
+                },
+                new TableType
+                {
+                    Id = 5,
+                    Private = true,
+                    Seat = 6
+                },
+                new TableType
+                {
+                    Id = 6,
+                    Private = false,
+                    Seat = 6
+                },
+                new TableType
+                {
+                    Id = 7,
+                    Private = true,
+                    Seat = 8
+                },
+                new TableType
+                {
+                    Id = 8,
+                    Private = false,
+                    Seat = 8
+                },
+                new TableType
+                {
+                    Id = 9,
+                    Private = true,
+                    Seat = 12
+                },
+                new TableType
+                {
+                    Id = 10,
+                    Private = false,
+                    Seat = 12
                 }
                 );
         }
