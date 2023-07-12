@@ -35,8 +35,7 @@ namespace TableReservationAPI.CustomMiddleware
         }
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            string authHeader = context.HttpContext.Request.Headers["Authorization"];
-            Console.WriteLine(authHeader);
+            string? authHeader = context.HttpContext.Request.Headers["Authorization"];            
             SetConfiguration(context);
             AuthorizedModel? authorized = null;
             string message = "Unauthorized";

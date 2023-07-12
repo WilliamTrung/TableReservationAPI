@@ -13,8 +13,12 @@ namespace ApplicationService.CustomJsonConverter
     {
         public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             string timeString = reader.GetString();
-            var time = TimeOnly.Parse(timeString); 
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument.
+            var time = TimeOnly.Parse(timeString);
+#pragma warning restore CS8604 // Possible null reference argument.
             return TimeOnly.Parse(timeString);
         }
 

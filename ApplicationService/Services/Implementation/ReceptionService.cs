@@ -34,17 +34,54 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="InvalidDataException"></exception>
-        public async Task AssignTable(int tableId, ReservationModel reservation)
+        public async Task AssignTable(int tableId, AssignTableReservationModel reservation)
         {
-            var task_table = (await _unitOfWork.TableRepository.Get(filter: t => t.Id == tableId, includeProperties: "Type")).ToList();
-            var task_reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id)).ToList();
-            var table = task_table.FirstOrDefault();
-            var _reservation = task_reservation.FirstOrDefault();
-            if(table == null || _reservation == null) 
+            var _table = (await _unitOfWork.TableRepository.Get(filter: t => t.Id == tableId, includeProperties: "Type")).FirstOrDefault();            
+            //find reservation
+            var _reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id, includeProperties: "User")).FirstOrDefault();
+            
+            if (_table == null || _reservation == null) 
             {
                 throw new KeyNotFoundException();
             }
-            if(_reservation.Modified != reservation.ModifiedDate)
+            //check reservation with email or phone
+            if(reservation.Email != null || reservation.Phone != null)
+            {
+                if(reservation.Email != null)
+                {
+                    if (_reservation.User != null)
+                    {
+                        //check reservation email
+                        if (!(_reservation.User.Email == reservation.Email))
+                        {
+                            throw new InvalidDataException("Reservation's email mismatch!");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("This reservation does not have a specified user!");
+                    }
+                } else if (reservation.Phone != null)
+                {
+                    if (_reservation.Note != null)
+                    {
+                        //check reservation phone
+                        if (!_reservation.Note.Contains(reservation.Phone))
+                        {
+                            throw new InvalidDataException("Reservation's phone mismatch!");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("This reservation does not have a related phone number!");
+                    }
+                }
+            } else
+            {
+                throw new InvalidDataException("No email or phone provided!");
+            }
+            
+            if (_reservation.Modified != reservation.ModifiedDate)
             {
                 throw new InvalidOperationException();
             }
@@ -54,6 +91,7 @@ namespace ApplicationService.Services.Implementation
                 throw new InvalidDataException("Not a valid table for this reservation!");
             }
             _reservation.TableId = tableId;
+            _reservation.Status = IEnum.ReservationStatus.Assigned;
             await _unitOfWork.ReservationRepository.Update(_reservation, _reservation.Id);
             _unitOfWork.Commit();
         }
@@ -68,7 +106,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        async Task IReceptionService.CheckinCustomer(int reservationId)
+        public async Task CheckinCustomer(int reservationId)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
@@ -103,7 +141,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        async Task IReceptionService.CheckoutCustomer(int reservationId)
+        public async Task CheckoutCustomer(int reservationId)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var reservation = (await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservationId)).FirstOrDefault();
