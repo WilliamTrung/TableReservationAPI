@@ -121,7 +121,7 @@ builder.Services.AddHostedService<CheckinLateDetectionService>();
 string guide_navToken = "Use the token retrieved from <a href=\"https://williamtrung.github.io/TableReservationClient/\" target=\"_blank\">Go to token credentials</a>";
 string guide_toPostman = "Supply the token to postman Authorization - Type: Bearer Token";
 string guide_roleAlert = "Default role: Customer; mail fpt.edu.vn: Reception; For role: Administrator - contact developer";
-string current_version = "v1.3.1";
+string current_version = "v1.4.2";
 string br = "<br/>";
 string v_110 = br + br + "v1.1.0" + " - Implement profile management";
 string v_120 = br + br + "v1.2.0" + " - Implement auto trigger event on checkin late and checkout late";
@@ -132,6 +132,7 @@ string v_132 = br + br + "v1.3.2" + " - Fix reception/get-vacants to work proper
 string v_133 = br + br + "v1.3.3" + " - Fix manage-table to add table working properly --> passed in the status as 0: Available, 1: Unavailable";
 string v_140 = br + br + "v1.4.0" + " - Implement getting vacants and booking table to 30 minutes boundary between resersed time (mean to be booked at 7:30 etc as well as 7:00)";
 string v_141 = br + br + "v1.4.1" + " - Fix reception/get-vacants to work properly --> passed in the pending reservation id --> return tables' information";
+string v_142 = br + br + "v1.4.2" + " - Fix view pending reservations to view list instead of first reservations";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(current_version, new OpenApiInfo
@@ -139,7 +140,7 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Table Reservation API " + current_version,
         Version = current_version,
         Description = guide_navToken + br + guide_toPostman + br + guide_roleAlert +
-            v_110 + v_120 + v_121 + v_130 + v_131 + v_132 + v_133 + v_140 + v_141
+            v_110 + v_120 + v_121 + v_130 + v_131 + v_132 + v_133 + v_140 + v_141 + v_142
     });    
 });
 

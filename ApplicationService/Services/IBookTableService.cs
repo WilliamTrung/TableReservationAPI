@@ -20,7 +20,7 @@ namespace ApplicationService.Services
         /// <param name="requester"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester);
+        Task<IEnumerable<ReservationModel>> ViewCurrentReservation(AuthorizedModel requester);
         /// <summary>
         /// Get vacant tables based on
         /// <para>Number of tables in desired type and seat</para>

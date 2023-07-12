@@ -247,19 +247,22 @@ namespace ApplicationService.Services.Implementation
         /// <param name="requester"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public async Task<ReservationModel> ViewCurrentReservation(AuthorizedModel requester)
+        public async Task<IEnumerable<ReservationModel>> ViewCurrentReservation(AuthorizedModel requester)
         {
             Console.WriteLine(DateTime.UtcNow);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTime.UtcNow, orderBy: null, includeProperties:"User,Table");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            
-            var reservation = find.FirstOrDefault();
-            if(reservation != null)
+                        
+            if(find.Count() > 0)
             {
-                var model = ReservationModel.FromReservation(reservation);
-                model.AssignedTableId = null;
-                return model;
+                var result = new List<ReservationModel>();
+                foreach (var reservation in find)
+                {
+                    var model = ReservationModel.FromReservation(reservation);
+                    result.Add(model);
+                }                                
+                return result;
             } else
             {
                 throw new KeyNotFoundException();
