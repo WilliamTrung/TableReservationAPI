@@ -18,7 +18,9 @@ namespace ApplicationService.CustomJsonConverter
                 throw new JsonException();
             }
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             string enumValueString = reader.GetString();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             if (Enum.TryParse(enumValueString, true, out TEnum enumValue))
             {
                 return enumValue;

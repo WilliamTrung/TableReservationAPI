@@ -96,7 +96,7 @@ namespace ApplicationService.Services.Implementation
             var list = new List<VacantTables>();
             for (double i = GlobalValidation.START_TIME; i <= GlobalValidation.END_TIME; i+=0.5)
             {
-                int count_reservations_atTime = reservations_inday.Count(r => r.ReservedTime.TimeOfDay >= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS * -1) && r.ReservedTime.TimeOfDay <= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS));
+                int count_reservations_atTime = reservations_inday.Count(r => r.ReservedTime.TimeOfDay >= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS * -1) && r.ReservedTime.TimeOfDay <= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS+1));
                 int count_vacant = count_desired_table_inday - count_reservations_atTime;
                 var item = new VacantTables(count_vacant, TimeOnly.FromTimeSpan(TimeSpan.FromHours(i)));
                 list.Add(item);
@@ -144,6 +144,7 @@ namespace ApplicationService.Services.Implementation
                     found.Note = validateModel.Note;
                     found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
                     found.Private = validateModel.Private;
+                    found.Status = IEnum.ReservationStatus.Pending;
                     found.TableId = null;
                     await _unitOfWork.ReservationRepository.Update(found, found.Id);
                     _unitOfWork.Commit();
@@ -251,7 +252,7 @@ namespace ApplicationService.Services.Implementation
         {
             Console.WriteLine(DateTime.UtcNow);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && r.Status == IEnum.ReservationStatus.Pending && r.ReservedTime > DateTime.UtcNow, orderBy: null, includeProperties:"User,Table");
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.User.Email == requester.Email && (r.Status == IEnum.ReservationStatus.Pending || r.Status == IEnum.ReservationStatus.Assigned) && r.ReservedTime > DateTime.UtcNow, orderBy: null, includeProperties:"User,Table");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                         
             if(find.Count() > 0)
@@ -260,6 +261,7 @@ namespace ApplicationService.Services.Implementation
                 foreach (var reservation in find)
                 {
                     var model = ReservationModel.FromReservation(reservation);
+                    model.AssignedTableId = null;
                     result.Add(model);
                 }                                
                 return result;

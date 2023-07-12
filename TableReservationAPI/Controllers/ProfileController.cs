@@ -21,7 +21,7 @@ namespace TableReservationAPI.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> GetProfileAsync() { 
-            string authHeader = Request.Headers.Authorization;
+            string? authHeader = Request.Headers.Authorization;
             try
             {
                 var user = await _loginService.ValidateLoginAsync(authHeader);
@@ -40,7 +40,7 @@ namespace TableReservationAPI.Controllers
         [HttpPost("update-phone")]
         public async Task<IActionResult> UpdatePhoneNumberAsync(UpdatePhoneModel phoneNumber)
         {
-            string authHeader = Request.Headers.Authorization;
+            string? authHeader = Request.Headers.Authorization;
             try
             {
                 var user = await _loginService.ValidateLoginAsync(authHeader);

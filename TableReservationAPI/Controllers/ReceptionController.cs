@@ -44,7 +44,7 @@ namespace TableReservationAPI.Controllers
         }
 
         [HttpPut("assign-table")]
-        public async Task<IActionResult> AssignTableAsync(int tableId, ReservationModel reservation)
+        public async Task<IActionResult> AssignTableAsync(int tableId, AssignTableReservationModel reservation)
         {
             try
             {

@@ -22,7 +22,7 @@ namespace ApplicationService.Services
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="InvalidDataException"></exception>
-        Task AssignTable(int tableId, ReservationModel reservation);
+        Task AssignTable(int tableId, AssignTableReservationModel reservation);
         Task<IEnumerable<ReservationModel>> GetPendingReservations();
         /// <summary>
         /// Get vacant table(s) based on provided reservationId
