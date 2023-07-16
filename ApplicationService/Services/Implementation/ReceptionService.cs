@@ -115,9 +115,9 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new KeyNotFoundException("Reservation not found!");                
             }
-            if(reservation.Status != IEnum.ReservationStatus.Pending)
+            if(reservation.Status != IEnum.ReservationStatus.Assigned)
             {
-                throw new ArgumentNullException("No pending reservation!");
+                throw new ArgumentNullException("Not assigned reservation!");
             }
             if(!(DateTimeOffset.Now >= reservation.ReservedTime && DateTimeOffset.Now <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
             {
@@ -152,7 +152,7 @@ namespace ApplicationService.Services.Implementation
             }
             if (reservation.Status != IEnum.ReservationStatus.Active)
             {
-                throw new ArgumentNullException("No active reservation!");
+                throw new ArgumentNullException("Not active reservation!");
             }
             if (!(DateTimeOffset.Now <= reservation.Modified.AddMinutes(GlobalValidation.CHECKOUT_MAX)))
             {
