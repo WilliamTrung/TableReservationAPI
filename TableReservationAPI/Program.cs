@@ -135,7 +135,7 @@ string v_141 = br + br + "v1.4.1" + " - Fix reception/get-vacants to work proper
 string v_142 = br + br + "v1.4.2" + " - Fix view pending reservations to view list instead of first reservations";
 string v_143 = br + br + "v1.4.3" + " - Fix warning -- minor";
 string v_144 = br + br + "v1.4.4" + " - Adjust assign table to set the status reservation to Assigned -- Adjust the passed model for assigning table";
-string v_145 = br + br + "v1.4.5" + " - Implement get assigned reservations for reception";
+string v_145 = br + br + "v1.4.5" + " - Implement get assigned   reservations for reception";
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(current_version, new OpenApiInfo

@@ -17,7 +17,8 @@ namespace ApplicationService.Services
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         Task AddAnonymousReservation(NewAnonymousModel reservation);
-        Task<IEnumerable<ReservationModel>> GetPendingAnonymousReservations();
+        Task<IEnumerable<UpdateAnonymousModel>> GetPendingAnonymousReservations();
+        Task<IEnumerable<UpdateAnonymousModel>> GetAssignedAnonymousReservations();
         /// <summary>
         /// Cancel an anonymous reservation
         /// <para>Throw InvalidOperationException: Exceed deadline to be canceled!</para>

@@ -47,11 +47,12 @@ namespace ApplicationService.Services.Implementation
             }
         }
 
-        public async Task<IEnumerable<ReservationModel>> GetPendingAnonymousReservations()
+        public async Task<IEnumerable<UpdateAnonymousModel>> GetPendingAnonymousReservations()
         {
             var query = await _unitOfWork.ReservationRepository.Get(filter: r => r.UserId == null && r.Status == IEnum.ReservationStatus.Pending);
-            var result = new List<ReservationModel>();
-            result = query.Select(r => ReservationModel.FromReservation(r)).ToList();
+            var result = new List<UpdateAnonymousModel>();
+            
+            result = query.Select(r => UpdateAnonymousModel.FromReservation(r)).ToList();
             return result;
         }
         /// <summary>
@@ -82,6 +83,15 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new KeyNotFoundException("The reservation does not exist!");
             }
-        }        
+        }
+
+        public async Task<IEnumerable<UpdateAnonymousModel>> GetAssignedAnonymousReservations()
+        {
+            var query = await _unitOfWork.ReservationRepository.Get(filter: r => r.UserId == null && r.Status == IEnum.ReservationStatus.Assigned);
+            var result = new List<UpdateAnonymousModel>();
+
+            result = query.Select(r => UpdateAnonymousModel.FromReservation(r)).ToList();
+            return result;
+        }
     }
 }

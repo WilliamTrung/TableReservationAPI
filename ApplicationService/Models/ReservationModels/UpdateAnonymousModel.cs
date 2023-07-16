@@ -32,7 +32,7 @@ namespace ApplicationService.Models.ReservationModels
 
 
 
-        public UpdateAnonymousModel FromReservation(Reservation reservation)
+        public static UpdateAnonymousModel FromReservation(Reservation reservation)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
             string[] split = AnonymousReservationHelper.SplitNoteToPhone_Note(reservation.Note);

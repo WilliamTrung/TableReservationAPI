@@ -64,6 +64,12 @@ namespace TableReservationAPI.Controllers
             var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
             return Ok(pending);
         }
+        [HttpGet("assigned-reservations")]
+        public async Task<IActionResult> GetAssignedReservationsAsync()
+        {
+            var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
+            return Ok(pending);
+        }
         [HttpPost("check-in")]
         public async Task<IActionResult> CheckInAnonymousReservation(int reservationId)
         {
