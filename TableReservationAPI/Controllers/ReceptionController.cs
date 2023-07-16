@@ -19,6 +19,13 @@ namespace TableReservationAPI.Controllers
         {
             _receptionService = receptionService;
         }
+        [HttpGet("assigned-reservation")]
+        [EnableQuery]
+        public IActionResult GetAssignedReservations()
+        {
+            var result = _receptionService.GetAssignedReservation().Result;
+            return Ok(result);
+        }
         [HttpGet("pending-reservation")]
         [EnableQuery]
         public IActionResult GetPendingReservations() { 

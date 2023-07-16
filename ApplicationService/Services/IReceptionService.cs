@@ -23,6 +23,7 @@ namespace ApplicationService.Services
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="InvalidDataException"></exception>
         Task AssignTable(int tableId, AssignTableReservationModel reservation);
+        Task<IEnumerable<ReservationModel>> GetAssignedReservation();
         Task<IEnumerable<ReservationModel>> GetPendingReservations();
         /// <summary>
         /// Get vacant table(s) based on provided reservationId
