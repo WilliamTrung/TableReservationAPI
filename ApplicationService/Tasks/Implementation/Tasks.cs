@@ -22,7 +22,7 @@ namespace ApplicationService.Tasks.Implementation
         {            
             var time_compare = DateTime.Now.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY * -1);
             Console.WriteLine("Start latecheckinreservation: " + DateTime.Now);
-            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.ReservedTime <= time_compare && (r.Status == IEnum.ReservationStatus.Assigned || r.Status == IEnum.ReservationStatus.Pending);
+            var reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.ReservedTime <= time_compare && (r.Status == IEnum.ReservationStatus.Assigned || r.Status == IEnum.ReservationStatus.Pending));
             foreach (var reservation in reservations)
             {
                 reservation.Status = IEnum.ReservationStatus.Cancel;
