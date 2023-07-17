@@ -41,34 +41,28 @@ namespace TableReservationAPI.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public IActionResult AddTable(NewTableModel table)
+        public async Task<IActionResult> AddTable(NewTableModel table)
         {
             try
             {
-                if (!_tableManagementService.AddTable(table).IsCompletedSuccessfully)
-                {
-                    return Ok(StatusCode(StatusCodes.Status500InternalServerError));
-                }
+                await _tableManagementService.AddTable(table);
             }
             catch (MissingMemberException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
             }
-            return Ok(StatusCode(StatusCodes.Status201Created));
+            return StatusCode(StatusCodes.Status201Created);
         }
         [HttpPut]
-        public IActionResult UpdateTable(ModifiedTableModel table)
+        public async Task<IActionResult> UpdateTableAsync(ModifiedTableModel table)
         {
             try
             {
-                if (!_tableManagementService.UpdateTable(table).IsCompletedSuccessfully)
-                {
-                    return Ok(StatusCode(StatusCodes.Status500InternalServerError));
-                }
+                await _tableManagementService.UpdateTable(table);
             }
             catch (MissingMemberException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
             }
             return Ok(StatusCode(StatusCodes.Status202Accepted));
         }
