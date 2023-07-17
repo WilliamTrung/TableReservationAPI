@@ -46,12 +46,12 @@ namespace TableReservationAPI.Controllers
             try
             {
                 await _tableManagementService.AddTable(table);
+                return StatusCode(StatusCodes.Status201Created);
             }
             catch (MissingMemberException ex)
             {
                 return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
-            }
-            return StatusCode(StatusCodes.Status201Created);
+            }            
         }
         [HttpPut]
         public async Task<IActionResult> UpdateTableAsync(ModifiedTableModel table)
@@ -59,12 +59,13 @@ namespace TableReservationAPI.Controllers
             try
             {
                 await _tableManagementService.UpdateTable(table);
+                return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
             catch (MissingMemberException ex)
             {
-                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
             }
-            return Ok(StatusCode(StatusCodes.Status202Accepted));
+            
         }
     }
 }
