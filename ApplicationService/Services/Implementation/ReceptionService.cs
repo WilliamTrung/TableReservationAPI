@@ -230,5 +230,16 @@ namespace ApplicationService.Services.Implementation
             }
             return result;
         }
+
+        public async Task<IEnumerable<ReservationModel>> GetActiveReservation()
+        {
+            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Active, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
+            var result = new List<ReservationModel>();
+            foreach (var item in pending_reservations)
+            {
+                result.Add(ReservationModel.FromReservation(item));
+            }
+            return result;
+        }
     }
 }
