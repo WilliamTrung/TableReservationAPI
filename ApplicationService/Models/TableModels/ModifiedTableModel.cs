@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ApplicationService.Models.TableModels
@@ -12,6 +13,7 @@ namespace ApplicationService.Models.TableModels
     {
         public int Id { get; set; }
         public string TableDescription { get; set; } = null!;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public IEnum.TableStatus Status { get; set; } = IEnum.TableStatus.Available;
         public int Seat { get; set; }
         public bool Private { get; set; }

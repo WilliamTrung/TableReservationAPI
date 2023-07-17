@@ -11,7 +11,7 @@ using TableReservationAPI.CustomMiddleware;
 namespace TableReservationAPI.Controllers
 {
     [Route("api/manage-table")]
-    [GoogleAuthorized(roles: "Reception,Administrator")]
+    //[GoogleAuthorized(roles: "Reception,Administrator")]
     [ApiController]
     public class ManageTableController : ODataController
     {
