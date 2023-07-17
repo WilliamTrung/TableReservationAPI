@@ -60,15 +60,15 @@ namespace TableReservationAPI.Controllers
             }
             catch (KeyNotFoundException)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, "No table or reservation found!"));
+                return StatusCode(StatusCodes.Status404NotFound, "No table or reservation found!");
             }
             catch (InvalidOperationException)
             {
-                return Ok(StatusCode(StatusCodes.Status409Conflict, "This reservation has been modified!"));
+                return StatusCode(StatusCodes.Status409Conflict, "This reservation has been modified!");
             }
             catch (InvalidDataException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
             }
         }
         [HttpPost("check-in")]
@@ -81,15 +81,15 @@ namespace TableReservationAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status409Conflict, ex.Message));
+                return StatusCode(StatusCodes.Status409Conflict, ex.Message);
             }
             catch (ArgumentNullException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
             }
         }
         [HttpPost("check-out")]
@@ -102,15 +102,15 @@ namespace TableReservationAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status409Conflict, ex.Message));
+                return StatusCode(StatusCodes.Status409Conflict, ex.Message);
             }
             catch (ArgumentNullException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status406NotAcceptable, ex.Message));
+                return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
             }
         }
     }
