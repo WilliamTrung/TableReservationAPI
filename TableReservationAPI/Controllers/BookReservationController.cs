@@ -20,7 +20,7 @@ namespace TableReservationAPI.Controllers
             _loginService = loginService;
             _bookTableService = bookTableService;
         }
-        [HttpGet("vacant-amount")]
+        [HttpPost("vacant-amount")]
         public IActionResult GetVacantsAmount(DesiredReservationModel desired) 
         {
             var vacants = _bookTableService.GetVacantTables(desired).Result;
