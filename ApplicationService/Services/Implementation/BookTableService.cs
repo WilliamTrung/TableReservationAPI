@@ -94,7 +94,25 @@ namespace ApplicationService.Services.Implementation
             var count_desired_table_inday = desired_table_inday.Count();
 
             var list = new List<VacantTables>();
-            for (double i = GlobalValidation.START_TIME; i <= GlobalValidation.END_TIME; i+=0.5)
+            double i = GlobalValidation.START_TIME;
+            var current_hour = TimeOnly.FromDateTime(current_time);        
+            //check if current time is today and in working hour --> limit the returned result
+            if(desired.DesiredDate == DateOnly.FromDateTime(current_time) && current_hour >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(GlobalValidation.START_TIME)) && current_hour <= TimeOnly.FromTimeSpan(TimeSpan.FromHours(GlobalValidation.END_TIME)))
+            {
+                // Find the nearest half-hour
+                int minutes = current_hour.Minute;
+                int nearestHalfHour = ((minutes + 29) / 30) * 30; // Round up to nearest half-hour
+
+                // If the minutes are 60 after rounding, increment the hour
+                int nearestHour = current_hour.Hour + (nearestHalfHour / 60);
+                nearestHalfHour %= 60;
+
+                // Create the nearest round time
+                TimeOnly nearestRoundTime = new TimeOnly(nearestHour, nearestHalfHour, 0);
+                nearestRoundTime = nearestRoundTime.AddHours(GlobalValidation.BOUNDARY_HOURS);
+                i = nearestRoundTime.Hour + (nearestRoundTime.Minute/60);
+            }
+            for (; i <= GlobalValidation.END_TIME; i+=0.5)
             {
                 int count_reservations_atTime = reservations_inday.Count(r => r.ReservedTime.TimeOfDay >= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS * -1) && r.ReservedTime.TimeOfDay <= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS+1));
                 int count_vacant = count_desired_table_inday - count_reservations_atTime;
@@ -167,7 +185,7 @@ namespace ApplicationService.Services.Implementation
         /// <exception cref="InvalidDataException"></exception>
         public Task<bool> ValidateReservation(NewReservationModel reservation)
         {
-            if (reservation.DesiredDate.ToDateTime(reservation.DesiredTime) < DateTime.Now.AddHours(2).AddMinutes(30))
+            if (reservation.DesiredDate.ToDateTime(reservation.DesiredTime) < DateTime.Now.AddHours(GlobalValidation.BOUNDARY_HOURS))
             {
                 throw new InvalidDataException();
             }

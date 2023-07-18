@@ -33,8 +33,8 @@ namespace ApplicationService.Services.Implementation
                 if (await ValidateReservation(reservation.ToNewReservation()))
                 {
                     var newReservation = reservation.ToReservation();
-                    //await _unitOfWork.ReservationRepository.Create(newReservation);
-                    //_unitOfWork.Commit();
+                    await _unitOfWork.ReservationRepository.Create(newReservation);
+                    _unitOfWork.Commit();
                 }
                 else
                 {
