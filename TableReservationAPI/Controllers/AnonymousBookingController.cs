@@ -8,7 +8,7 @@ using TableReservationAPI.CustomMiddleware;
 namespace TableReservationAPI.Controllers
 {
     [Route("api/anonymous-booking")]
-    [GoogleAuthorized(roles: "Reception")]
+    [GoogleAuthorized(roles: "Reception,Administrator")]
     [ApiController]
     public class AnonymousBookingController : ODataController
     {
