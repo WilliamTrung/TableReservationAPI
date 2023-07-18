@@ -119,7 +119,7 @@ namespace ApplicationService.Services.Implementation
             {
                 throw new ArgumentNullException("Not assigned reservation!");
             }
-            if(!(DateTimeOffset.Now >= reservation.ReservedTime && DateTimeOffset.Now <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
+            if(!(DateTime.Now >= reservation.ReservedTime && DateTime.Now <= reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY)))
             {
                 throw new InvalidOperationException("Must only be checked in within " + reservation.ReservedTime + " - " + reservation.ReservedTime.AddMinutes(GlobalValidation.CHECKIN_BOUNDARY));
             }

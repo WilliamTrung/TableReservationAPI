@@ -93,5 +93,14 @@ namespace ApplicationService.Services.Implementation
             result = query.Select(r => UpdateAnonymousModel.FromReservation(r)).ToList();
             return result;
         }
+
+        public async Task<IEnumerable<UpdateAnonymousModel>> GetActiveAnonymousReservations()
+        {
+            var query = await _unitOfWork.ReservationRepository.Get(filter: r => r.UserId == null && r.Status == IEnum.ReservationStatus.Active);
+            var result = new List<UpdateAnonymousModel>();
+
+            result = query.Select(r => UpdateAnonymousModel.FromReservation(r)).ToList();
+            return result;
+        }
     }
 }
