@@ -26,7 +26,7 @@ namespace ApplicationService.Models.ReservationModels
         public TimeOnly DesiredTime { get; set; }
         public bool Private { get; set; } = false;
         [Required]
-        [PhoneValidator]
+        [PhoneValidator(ErrorMessage = "Provided phone number is not valid!")]
         public string Phone { get; set; } = null!;
         public string? Note { get; set; }
         
