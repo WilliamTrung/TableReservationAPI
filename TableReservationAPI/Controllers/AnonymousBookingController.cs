@@ -17,7 +17,7 @@ namespace TableReservationAPI.Controllers
         {
             _anonymousBookingService = anonymousBookingService;
         }
-        [HttpGet("vacant-amount")]
+        [HttpPost("vacant-amount")]
         public IActionResult GetVacantsAmount(DesiredReservationModel desired)
         {
             var vacants = _anonymousBookingService.GetVacantTables(desired).Result;
