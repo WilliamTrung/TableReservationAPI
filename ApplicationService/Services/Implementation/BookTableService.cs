@@ -48,7 +48,7 @@ namespace ApplicationService.Services.Implementation
                 }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 //modifiying
-                if (!(found.ReservedTime > DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
+                if (!(found.ReservedTime > DateTime.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }
@@ -148,7 +148,7 @@ namespace ApplicationService.Services.Implementation
                 }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 //modifiying
-                if(!(found.ReservedTime > DateTimeOffset.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
+                if(!(found.ReservedTime > DateTime.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }

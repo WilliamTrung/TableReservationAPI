@@ -42,6 +42,23 @@ namespace TableReservationAPI.Controllers
                 return StatusCode(StatusCodes.Status401Unauthorized);
             }
         }
+        [HttpPut("modify")]
+        public async Task<IActionResult> ModifyReservationAsync(UpdateAnonymousModel reservation)
+        {
+            try
+            {
+                await _anonymousBookingService.ModifiedReservation(reservation);
+                return Ok(StatusCode(StatusCodes.Status202Accepted));
+            }
+            catch (InvalidOperationException)
+            {
+                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, "No vacant table found!"));
+            }
+            catch (KeyNotFoundException)
+            {
+                return Ok(StatusCode(StatusCodes.Status404NotFound, "No reservation found!"));
+            }
+        }
         [HttpPut("cancel")]
         public async Task<IActionResult> CancelReservationAsync(int reservationId)
         {
@@ -59,12 +76,14 @@ namespace TableReservationAPI.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, "No reservation found!");
             }
         }
-        [HttpGet("pending-reservations")]
+        [HttpGet("current-reservations")]
         [EnableQuery]
-        public async Task<IActionResult> GetCurrentPendingReservationsAsync()
+        public async Task<IActionResult> GetCurrentReservationsAsync()
         {
             var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
-            return Ok(pending);
+            var assigned = await _anonymousBookingService.GetAssignedAnonymousReservations();
+            var mix = pending.Concat(assigned);
+            return Ok(mix);
         }
         [HttpGet("assigned-reservations")]
         [EnableQuery]

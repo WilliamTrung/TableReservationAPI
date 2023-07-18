@@ -31,7 +31,18 @@ namespace ApplicationService.Models.ReservationModels
 
 
 
-
+        public NewReservationModel ToNewReservation()
+        {
+            return new NewReservationModel
+            {
+                DesiredDate = DateOnly.FromDateTime(ReservedTime.Date),
+                DesiredTime = TimeOnly.FromTimeSpan(ReservedTime.TimeOfDay),
+                Email = null,
+                Note = AnonymousReservationHelper.MergePhone_Note(Phone, Note),
+                Private = Private,
+                Seat = GuestAmount
+            };
+        }
         public static UpdateAnonymousModel FromReservation(Reservation reservation)
         {
 #pragma warning disable CS8604 // Possible null reference argument.

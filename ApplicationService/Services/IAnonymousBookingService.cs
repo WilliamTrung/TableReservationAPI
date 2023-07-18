@@ -29,6 +29,17 @@ namespace ApplicationService.Services
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
-        Task CancelAnonymousReservation(int reservationId);        
+        Task CancelAnonymousReservation(int reservationId);
+        /// <summary>
+        /// Mofidy reservation through ValidateReservation
+        /// <para>Throw InvalidOperationException: No vacant at current time</para>
+        /// <para>Throw KeyNotFoundException: No reservation has such Id</para>
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <param name="requester"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="KeyNotFoundException"></exception>
+        Task ModifiedReservation(UpdateAnonymousModel reservation);
     }
 }

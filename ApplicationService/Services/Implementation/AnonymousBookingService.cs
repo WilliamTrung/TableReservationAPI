@@ -102,5 +102,51 @@ namespace ApplicationService.Services.Implementation
             result = query.Select(r => UpdateAnonymousModel.FromReservation(r)).ToList();
             return result;
         }
+        /// <summary>
+        /// Mofidy reservation through ValidateReservation
+        /// <para>Throw InvalidOperationException: No vacant at current time</para>
+        /// <para>Throw KeyNotFoundException: No reservation has such Id</para>
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <param name="requester"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="KeyNotFoundException"></exception>
+        public async Task ModifiedReservation(UpdateAnonymousModel reservation)
+        {
+            var find = await _unitOfWork.ReservationRepository.Get(filter: r => r.Id == reservation.Id);
+            var found = find.FirstOrDefault();
+            if (found != null)
+            {
+                //modifiying
+                if (!(found.ReservedTime > DateTime.Now.AddHours(GlobalValidation.DEADLINE_HOURS)))
+                {
+                    throw new InvalidOperationException("Exceed deadline");
+                }
+                var validateModel = reservation.ToNewReservation();                
+                if (await ValidateReservation(validateModel))
+                {
+                    //is valid change
+                    //update
+                    found.GuestAmount = validateModel.Seat;
+                    found.Note = validateModel.Note;
+                    found.ReservedTime = validateModel.DesiredDate.ToDateTime(validateModel.DesiredTime);
+                    found.Private = validateModel.Private;
+                    found.Status = IEnum.ReservationStatus.Pending;
+                    found.TableId = null;
+                    await _unitOfWork.ReservationRepository.Update(found, found.Id);
+                    _unitOfWork.Commit();
+                }
+                else
+                {
+                    //throw
+                    throw new InvalidOperationException("The last vacant has been occupied!");
+                }
+            }
+            else
+            {
+                throw new KeyNotFoundException();
+            }
+        }
     }
 }
