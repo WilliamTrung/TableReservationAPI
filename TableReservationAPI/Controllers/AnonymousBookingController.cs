@@ -2,6 +2,7 @@
 using ApplicationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using TableReservationAPI.CustomMiddleware;
 
@@ -59,12 +60,14 @@ namespace TableReservationAPI.Controllers
             }
         }
         [HttpGet("pending-reservations")]
+        [EnableQuery]
         public async Task<IActionResult> GetCurrentPendingReservationsAsync()
         {
             var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
             return Ok(pending);
         }
         [HttpGet("assigned-reservations")]
+        [EnableQuery]
         public async Task<IActionResult> GetAssignedReservationsAsync()
         {
             var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
