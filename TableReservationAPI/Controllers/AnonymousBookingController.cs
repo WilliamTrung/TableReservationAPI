@@ -34,11 +34,11 @@ namespace TableReservationAPI.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message));
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
             catch (Exception)
             {
-                return Ok(StatusCode(StatusCodes.Status401Unauthorized));
+                return StatusCode(StatusCodes.Status401Unauthorized);
             }
         }
         [HttpPut("cancel")]
@@ -51,11 +51,11 @@ namespace TableReservationAPI.Controllers
             }
             catch (InvalidOperationException)
             {
-                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, "Exceed deadline - must be 3 hours soon to cancel!"));
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Exceed deadline - must be 3 hours soon to cancel!");
             }
             catch (KeyNotFoundException)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, "No reservation found!"));
+                return StatusCode(StatusCodes.Status404NotFound, "No reservation found!");
             }
         }
         [HttpGet("pending-reservations")]
@@ -80,11 +80,11 @@ namespace TableReservationAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status400BadRequest, ex.Message));
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
         }
         [HttpPost("check-out")]
@@ -97,11 +97,11 @@ namespace TableReservationAPI.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, ex.Message));
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                return Ok(StatusCode(StatusCodes.Status400BadRequest, ex.Message));
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
         }
     }
