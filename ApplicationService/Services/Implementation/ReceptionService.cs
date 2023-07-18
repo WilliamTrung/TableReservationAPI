@@ -167,7 +167,7 @@ namespace ApplicationService.Services.Implementation
 
         async Task<IEnumerable<ReservationModel>> IReceptionService.GetPendingReservations()
         {
-            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Pending, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
+            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Pending && r.User != null, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
             var result = new List<ReservationModel>();
             foreach (var item in pending_reservations)
             {
@@ -222,7 +222,7 @@ namespace ApplicationService.Services.Implementation
 
         public async Task<IEnumerable<ReservationModel>> GetAssignedReservation()
         {
-            var assigned_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Assigned, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
+            var assigned_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Assigned && r.User != null, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
             var result = new List<ReservationModel>();
             foreach (var item in assigned_reservations)
             {
@@ -233,7 +233,7 @@ namespace ApplicationService.Services.Implementation
 
         public async Task<IEnumerable<ReservationModel>> GetActiveReservation()
         {
-            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Active, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
+            var pending_reservations = await _unitOfWork.ReservationRepository.Get(filter: r => r.Status == IEnum.ReservationStatus.Active && r.User != null, orderBy: r => r.OrderBy(c => c.ReservedTime), includeProperties: "User");
             var result = new List<ReservationModel>();
             foreach (var item in pending_reservations)
             {
