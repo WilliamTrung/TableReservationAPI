@@ -123,6 +123,12 @@ namespace ApplicationService.Services.Implementation
                 {
                     throw new InvalidOperationException("Exceed deadline");
                 }
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                if (!found.Note.Contains(reservation.Phone))
+                {
+                    throw new InvalidOperationException("Cannot change phone number!");
+                }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 var validateModel = reservation.ToNewReservation();                
                 if (await ValidateReservation(validateModel))
                 {

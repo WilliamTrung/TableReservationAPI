@@ -58,6 +58,7 @@ namespace ApplicationService.Models.ReservationModels
                 Modified = reservation.Modified,
                 Note = split[1],
                 Phone = split[0],
+                TableId = reservation.TableId,
             };
         }
         public Reservation ToReservation()

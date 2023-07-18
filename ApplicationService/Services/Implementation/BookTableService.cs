@@ -111,6 +111,9 @@ namespace ApplicationService.Services.Implementation
                 TimeOnly nearestRoundTime = new TimeOnly(nearestHour, nearestHalfHour, 0);
                 nearestRoundTime = nearestRoundTime.AddHours(GlobalValidation.BOUNDARY_HOURS);
                 i = nearestRoundTime.Hour + (nearestRoundTime.Minute/60);
+            } else if(desired.DesiredDate == DateOnly.FromDateTime(current_time) && current_hour >= TimeOnly.FromTimeSpan(TimeSpan.FromHours(GlobalValidation.END_TIME)))
+            {
+                i = GlobalValidation.END_TIME + 1;
             }
             for (; i <= GlobalValidation.END_TIME; i+=0.5)
             {

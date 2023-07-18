@@ -52,11 +52,11 @@ namespace TableReservationAPI.Controllers
             }
             catch (InvalidOperationException)
             {
-                return Ok(StatusCode(StatusCodes.Status503ServiceUnavailable, "No vacant table found!"));
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "No vacant table found!");
             }
             catch (KeyNotFoundException)
             {
-                return Ok(StatusCode(StatusCodes.Status404NotFound, "No reservation found!"));
+                return StatusCode(StatusCodes.Status404NotFound, "No reservation found!");
             }
         }
         [HttpPut("cancel")]
@@ -89,8 +89,8 @@ namespace TableReservationAPI.Controllers
         [EnableQuery]
         public async Task<IActionResult> GetAssignedReservationsAsync()
         {
-            var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
-            return Ok(pending);
+            var assigned = await _anonymousBookingService.GetAssignedAnonymousReservations();
+            return Ok(assigned);
         }
         [HttpGet("active-reservations")]
         [EnableQuery]
