@@ -96,6 +96,7 @@ namespace TableReservationAPI.Controllers
         public async Task<IActionResult> GetAssignedReservationsAsync()
         {
             var assigned = await _anonymousBookingService.GetAssignedAnonymousReservations();
+            assigned = assigned.OrderByDescending(r => r.ReservedTime)
             return Ok(assigned);
         }
         [HttpGet("active-reservations")]
@@ -103,6 +104,7 @@ namespace TableReservationAPI.Controllers
         public async Task<IActionResult> GetActiveReservations()
         {
             var pending = await _anonymousBookingService.GetActiveAnonymousReservations();
+            pending = pending.OrderByDescending(r => r.ReservedTime)
             return Ok(pending);
         }
         [HttpPost("check-in")]
