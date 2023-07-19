@@ -85,7 +85,9 @@ namespace TableReservationAPI.Controllers
         public async Task<IActionResult> GetCurrentReservationsAsync()
         {
             var pending = await _anonymousBookingService.GetPendingAnonymousReservations();
+            pending = pending.OrderByDescending(r => r.ReservedTime);
             var assigned = await _anonymousBookingService.GetAssignedAnonymousReservations();
+            assigned = assigned.OrderByDescending(r => r.ReservedTime);
             var mix = pending.Concat(assigned);
             return Ok(mix);
         }
