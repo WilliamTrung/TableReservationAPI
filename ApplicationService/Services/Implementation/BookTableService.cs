@@ -119,6 +119,10 @@ namespace ApplicationService.Services.Implementation
             {
                 int count_reservations_atTime = reservations_inday.Count(r => r.ReservedTime.TimeOfDay >= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS * -1) && r.ReservedTime.TimeOfDay <= TimeSpan.FromHours(i + GlobalValidation.BOUNDARY_HOURS+1));
                 int count_vacant = count_desired_table_inday - count_reservations_atTime;
+                if(count_vacant < 0)
+                {
+                    count_vacant = 0;
+                }
                 var item = new VacantTables(count_vacant, TimeOnly.FromTimeSpan(TimeSpan.FromHours(i)));
                 list.Add(item);
             }

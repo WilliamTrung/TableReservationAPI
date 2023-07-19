@@ -50,6 +50,10 @@ namespace TableReservationAPI.Controllers
                 await _anonymousBookingService.ModifiedReservation(reservation);
                 return Ok(StatusCode(StatusCodes.Status202Accepted));
             }
+            catch (InvalidDataException)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Invalid time for " + reservation.ReservedTime);
+            }
             catch (InvalidOperationException)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, "No vacant table found!");

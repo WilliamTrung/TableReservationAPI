@@ -14,6 +14,6 @@ namespace Validator
         public static readonly int END_TIME = 21;//hour
         public static readonly int DEADLINE_HOURS = 0;//hour 3
         public static readonly int BOUNDARY_HOURS = 1;//hour
-        public static readonly int BOUNDARY_SEAT = 3;//seat
+        public static readonly int BOUNDARY_SEAT = 1;//seat
     }
 }
